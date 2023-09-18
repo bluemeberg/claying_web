@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "Pretendard";
+  font-display: fallback;
+
+  src: url("./Pretendard-Regular.otf") format("opentype");
+
+  /* 사용할 폰트의 기본 스타일 */
+  font-weight: 700;
+  font-style: normal;
+}

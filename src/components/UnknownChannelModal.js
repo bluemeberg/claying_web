@@ -1,20 +1,17 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { styled } from "styled-components";
+import { youtubeDataAPIInstacne, youtubeGeneralAPI } from "../api/axios";
 import AfterRecommendPage from "../pages/HookingPage/AfterRecommendPage";
 import { formatNumber } from "../utils/formatSubsNumber";
 import "./ChannelModal.css";
 import StarRating from "./StarRating";
+import UnknownVideoBox from "./VideoBox/UnknownVideoBox";
 import VideoBox from "./VideoBox/VideoBox";
 import VideoBoxNonModal from "./VideoBox/VideoBoxNonModal";
-const ChannelModal = (props) => {
-  // 채널 명
-  // 채널 구독자 수
+const UnknownChannelModal = (props) => {
   // 채널 배너
   // 채널 설명
-  // 구독 여부
-  // 좋아요한 영상 정보
-  // 인기 영상 존재 여부
-  // 클레잉 성향들
+  // 영상 조회수
   const [modalOpen, setModalOpen] = useState(false);
 
   console.log(props);
@@ -26,9 +23,13 @@ const ChannelModal = (props) => {
   const handleRecommendClick = useCallback(() => {
     // 추천 데이터 서버 업로드 필요
     props.setModalOpen(false);
-    props.setResultModalOpen(true);
+    // 앱 다운로드 페이지로 이동
   }, [props]);
 
+  const [isExpanded, setIsExpanded] = useState(false);
+  const handleToggleContent = useCallback(() => {
+    setIsExpanded(!isExpanded);
+  }, [isExpanded]);
   return (
     <div className="presentation" role="presentation">
       <div className="wrapper-modal">
@@ -44,9 +45,9 @@ const ChannelModal = (props) => {
             </CancelButton>
           </ModalChannelBanner>
           <ModalChannelThumbnail>
-            {props.selectedChannel.channelThumbnail.url !== undefined ? (
+            {props.selectedChannel.channelThumbnail !== undefined ? (
               <img
-                src={props.selectedChannel.channelThumbnail.url}
+                src={props.selectedChannel.channelThumbnail}
                 alt="modal-channel-thumbnail"
               />
             ) : (
@@ -58,57 +59,44 @@ const ChannelModal = (props) => {
           </ModalChannelThumbnail>
           <ChannelTitle>{props.selectedChannel.channelTitle}</ChannelTitle>
           <ChannelSubsCount>
-            {props.selectedVideoDataByChannel === null ||
-            props.selectedVideoDataByChannel.subs === true ? (
-              <span> 구독중 </span>
-            ) : (
-              <p>미구독 </p>
-            )}
-            {formatNumber(props.selectedChannel.subsCount)}명
+            {formatNumber(props.selectedChannel.channelSubscribeCount)}명
           </ChannelSubsCount>
           <ChannelVideoCount>
             동영상 {props.selectedChannel.videoCount}개 | 조회수{" "}
             {formatNumber(props.selectedChannel.viewCount)}회
           </ChannelVideoCount>
-          <StarRating />
-          <ChannelRecommendInputBox
-            placeholder="채널 추천 한줄 리뷰를 남기고,
-클레잉 앱에서 주변 친구들의 추천 채널을 확인하세요!"
-          ></ChannelRecommendInputBox>
-          <ChannelRecommendInputBoxTextNumber>
-            0/50
-          </ChannelRecommendInputBoxTextNumber>
+
           <ChannelRecommendButton onClick={handleRecommendClick}>
-            채널 추천하기
+            관련 채널 더 발견하기
           </ChannelRecommendButton>
+          {/* 채널 설명 */}
+          <ChannelDescritpion>
+            {!isExpanded
+              ? `${props.selectedChannel.description.slice(0, 30)}...`
+              : `${props.selectedChannel.description}`}
+          </ChannelDescritpion>
+          <ChannelDescriptionMoreButton onClick={handleToggleContent}>
+            {isExpanded ? "접기" : "펼치기"}
+          </ChannelDescriptionMoreButton>
           <ChannelBoundary />
-          <LikedVideoSectionTitle>내가 좋아한 동영상</LikedVideoSectionTitle>
+          <LikedVideoSectionTitle>인기 급상승 영상 이력</LikedVideoSectionTitle>
           {/* map 문을 돌면서 확인 좋아하는 영상들 표출 피룡 */}
-          {props.selectedVideoDataByChannel === null ? (
-            <LikeVideoGuide>
-              <img src="/images/TestBanner.svg" alt="banner" />
-              아직 좋아요한 영상이 없습니다! <br></br>구독 중인 크리에이터의
-              영상에 좋아요를 눌러주세요!
-            </LikeVideoGuide>
-          ) : (
-            <VideoContainer>
-              {props.selectedVideoDataByChannel.videoID.map((data, index) => (
-                <VideoBoxNonModal
-                  key={index}
-                  likedVideo={data}
-                  selectedChannel={props.selectedChannel}
-                ></VideoBoxNonModal>
-              ))}
-            </VideoContainer>
-          )}
+          <VideoContainer>
+            {props.selectedChannel.videoList.map((data, index) => (
+              <UnknownVideoBox
+                key={index}
+                hotVideo={data}
+                selectedChannel={props.selectedChannel}
+              ></UnknownVideoBox>
+            ))}
+          </VideoContainer>
         </div>
       </div>
-      {modalOpen && <ChannelModal />}
     </div>
   );
 };
 
-export default ChannelModal;
+export default UnknownChannelModal;
 
 const ModalChannelBanner = styled.div`
   img {
@@ -182,48 +170,33 @@ const ChannelVideoCount = styled.div`
   line-height: 14px; /* 116.667% */
 `;
 
-const ChannelRecommendInputBox = styled.textarea`
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-  outline: none;
-  width: 88%;
+const ChannelDescritpion = styled.div`
   overflow: hidden;
-  overflow-y: auto; /* 세로 스크롤바가 필요한 경우에만 표시 */
-  resize: none; /* 크기 조정 비활성화 */
-  white-space: pre-wrap; /* 줄 바꿈 지원 */
-  word-wrap: break-word; /* 긴 단어 줄 바꿈 */
-  margin-top: 12px;
+  color: #000;
+  text-align: center;
+  text-overflow: ellipsis;
   font-family: Pretendard;
-  &:focus {
-    border-color: #007bff;
-    /* 추가적인 스타일링을 할 수 있습니다. */
-  }
-  &::placeholder {
-    /* placeholder에 대한 스타일 지정 */
-    overflow: hidden;
-    text-overflow: ellipsis; /* 텍스트가 넘칠 때 말줄임(...) 표시 */
-    font-size: 12px;
-  }
-`;
-
-const ChannelRecommendInputBoxTextNumber = styled.div`
-  color: #97a2b6;
-  text-align: end;
-  font-family: Inter;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
-  line-height: 14px; /* 116.667% */
-  margin-right: 8px;
-  margin-bottom: 8px;
-  margin-top: 4px;
+  line-height: 12px; /* 100% */
+  margin-left: 20px;
+  margin-right: 20px;
+`;
+
+const ChannelDescriptionMoreButton = styled.div`
+  color: rgba(0, 0, 0, 0.25);
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 12px; /* 100% */
+  letter-spacing: -0.24px;
+  margin-top: 8px;
 `;
 
 const ChannelRecommendButton = styled.div`
   display: flex;
-  height: 21px;
   padding: 14px 0px 13px 0px;
   justify-content: center;
   align-items: center;
@@ -237,8 +210,10 @@ const ChannelRecommendButton = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: 14px; /* 100% */
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-top: 12px;
+  margin-bottom: 20px;
 `;
 
 const ChannelBoundary = styled.div`
@@ -263,24 +238,7 @@ const LikedVideoSectionTitle = styled.div`
 `;
 
 const VideoContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 2fr);
-  margin-bottom: 28px;
-`;
-
-const LikeVideoGuide = styled.div`
-  color: #000;
-  font-family: Roboto;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 12px; /* 100% */
-  letter-spacing: -0.24px;
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
-  align-items: center;
-  img {
-    width: 160px;
-  }
+  margin-bottom: 28px;
 `;

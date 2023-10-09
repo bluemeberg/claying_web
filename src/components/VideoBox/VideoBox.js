@@ -1,18 +1,41 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { styled } from "styled-components";
 import { getTimeAgo } from "../../utils/timeManipulate";
 import ChannelModal from "../ChannelModal";
+import category from "../../utils/category_real.json";
+import RecommentResultModal from "../RecommmentResultModal";
 
 const VideoBox = (props) => {
   console.log(props.likedVideo);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState();
-  const handleClick = (channel) => {
-    setModalOpen(true);
-    setSelectedChannel(channel);
-  };
+  const [selectedVideoDataByChannel, setSelectedVideoDataByChannel] =
+    useState();
+  const [resultModalOpen, setResultModalOpen] = useState(false);
+
+  const handleClick = useCallback(
+    (channel) => {
+      setModalOpen(true);
+      console.log(channel);
+      let result = null;
+      console.log(props.videoDataByChannel);
+      for (let i = 0; i < props.videoDataByChannel.length; i++) {
+        console.log(props.videoDataByChannel[i]);
+        if (props.videoDataByChannel[i].channelID === channel.channelID) {
+          result = props.videoDataByChannel[i];
+          console.log(result);
+          break;
+        }
+      }
+      console.log(result);
+      setSelectedVideoDataByChannel(result);
+      setSelectedChannel(channel);
+    },
+    [props.videoDataByChannel]
+  );
   console.log(modalOpen);
+  console.log(selectedVideoDataByChannel);
   return (
     <div>
       <VideoBoxContainer onClick={() => handleClick(props.likedVideo)}>
@@ -22,6 +45,7 @@ const VideoBox = (props) => {
             alt={props.likedVideo.videoID}
           />
         </VideoThumbnail>
+        <VideoCategory>{category[props.likedVideo.dnatype]}</VideoCategory>
         <ChannelBox>
           <ChannelThumbnail>
             <img
@@ -46,7 +70,12 @@ const VideoBox = (props) => {
         <ChannelModal
           setModalOpen={setModalOpen}
           selectedChannel={selectedChannel}
+          selectedVideoDataByChannel={selectedVideoDataByChannel}
+          setResultModalOpen={setResultModalOpen}
         />
+      )}
+      {resultModalOpen && (
+        <RecommentResultModal setResultModalOpen={setResultModalOpen} />
       )}
     </div>
   );
@@ -114,4 +143,17 @@ const ChannelTitle = styled.div`
   font-weight: 300;
   line-height: 12px; /* 100% */
   text-align: start;
+`;
+
+const VideoCategory = styled.div`
+  color: #fff9f9;
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 22px; /* 157.143% */
+  margin-top: -32px;
+  display: flex;
+  margin-left: 12px;
+  margin-bottom: 4px;
 `;

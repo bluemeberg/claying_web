@@ -1,5 +1,5 @@
 import { getAuth, signOut } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 
@@ -25,32 +25,64 @@ const NavBar = (props) => {
       .then(() => {
         setPhotoUrl("");
         setUserName("");
+        localStorage.removeItem("userData");
         navigate("/");
       })
       .catch((error) => {
         console.log(error);
       });
   };
+  const handleGoBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const handleToggleSignout = useCallback(() => {
+    setIsExpanded(!isExpanded);
+  }, [isExpanded]);
   useEffect(() => {
     handleUserInfo();
   });
   return (
     <NavWrapper>
-      <Logo>
-        {props.color === "white" ? (
-          <TextLogo color="white">CLAYING</TextLogo>
-        ) : (
-          <TextLogo>CLAYING</TextLogo>
-        )}
-      </Logo>
+      {props.back === true ? (
+        <>
+          <BackButton onClick={handleGoBack}>
+            <img src="/images/BackButton.svg" alt="back" />
+          </BackButton>
+          <Logo>
+            {props.color === "white" ? (
+              <TextLogo color="white">CLAYING</TextLogo>
+            ) : (
+              <TextLogo>CLAYING</TextLogo>
+            )}
+          </Logo>
+        </>
+      ) : (
+        <Logo>
+          {props.color === "white" ? (
+            <TextLogo color="white">CLAYING</TextLogo>
+          ) : (
+            <TextLogo>CLAYING</TextLogo>
+          )}
+        </Logo>
+      )}
       {pathname === "/" || pathname === "/login" ? (
         <></>
       ) : (
         <SignOut>
-          <UserImg src={photoURL} alt={userName} />
-          <DropDown>
-            <span onClick={handleLogOut}>Sign Out</span>
-          </DropDown>
+          <UserImg
+            src={photoURL}
+            alt={userName}
+            onClick={handleToggleSignout}
+          />
+          {isExpanded ? (
+            <DropDown>
+              <span onClick={handleLogOut}>Sign Out</span>
+            </DropDown>
+          ) : (
+            <></>
+          )}
         </SignOut>
       )}
     </NavWrapper>
@@ -69,6 +101,10 @@ const NavWrapper = styled.nav`
   z-index: 3;
 `;
 
+const BackButton = styled.div`
+  display: flex;
+`;
+
 const Logo = styled.a`
   padding: 0;
   width: 80px;
@@ -84,7 +120,7 @@ const Logo = styled.a`
 `;
 const DropDown = styled.div`
   position: absolute;
-  top: 48px;
+  top: 40px;
   right: 0px;
   min-width: 80px;
   background: #3c95ff;
@@ -101,8 +137,8 @@ const DropDown = styled.div`
 
 const SignOut = styled.div`
   position: relative;
-  height: 40px;
-  width: 40px;
+  height: 32px;
+  width: 32px;
   display: flex;
   cursor: pointer;
   align-items: center;

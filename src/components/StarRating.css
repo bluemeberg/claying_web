@@ -1,0 +1,13 @@
+.container {
+  margin-top: 4px;
+}
+
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  color: #d9d9d9;
+}
+
+.star.active {
+  color: #ffbb54;
+}

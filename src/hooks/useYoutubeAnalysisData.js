@@ -28,7 +28,9 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
   const [totalAnalysistResult, setTotalAnalysistResult] = useState([]);
   const navigate = useNavigate();
   const handleYoutubeSubsData = useCallback(async () => {
+    // 채널 설명이 존재하는 구독 채널 정보(채널ID 포함)
     let userSubsData = [];
+    // 구독 채널 ID만 존재
     let userSubsChannels = [];
     try {
       const resultSubs = await youtubeDataAPIInstacne.get("/subscriptions", {
@@ -52,6 +54,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         // channelID, channelThumbnail, channelTitle, channelSubscribers, subsDuration, channelDescription
         let channelID = resultSubs.data.items[i].snippet.resourceId.channelId;
         userSubsChannels = [...userSubsChannels, channelID];
+        // 채널 설명 존재 여부 확인
         if (resultSubs.data.items[i].snippet.description !== "") {
           let channelID = resultSubs.data.items[i].snippet.resourceId.channelId;
           let channelDescription = resultSubs.data.items[i].snippet.description;
@@ -153,58 +156,67 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         },
       });
       for (let i = 0; i < result.data.items.length; i++) {
-        if (result.data.items[i].snippet.tags != null) {
-          // To do list
-          // 1. 영상 길이를 통해 쇼츠 영상 구분
-          console.log("hi zoo");
-          console.log(
-            result.data.items[i].contentDetails.duration.includes("M")
-          );
-          if (
-            (result.data.items[i].contentDetails.duration.includes("M") ===
-              true ||
-              result.data.items[i].contentDetails.duration.includes("H") ===
-                true) &&
-            result.data.items[i].contentDetails.duration.includes("PT1M") ===
-              false
-          ) {
-            console.log("hi zoo non filtering");
-            allVideos = [...allVideos, result.data.items[i]];
-            const tags = result.data.items[i].snippet.tags.slice(0, 10);
-            let data = {
-              agentId: email,
-              videoID: result.data.items[i].id,
-              videoTitle: result.data.items[i].snippet.title,
-              videoThumbnail:
-                result.data.items[i].snippet.thumbnails.medium.url,
-              videoDuration: result.data.items[i].contentDetails.duration,
-              uploadDate: result.data.items[i].snippet.publishedAt,
-              categoryID: result.data.items[i].snippet.categoryId,
-              channelID: result.data.items[i].snippet.channelId,
-              channelTitle: result.data.items[i].snippet.channelTitle,
-              description: result.data.items[i].snippet.description,
-              videoTags: tags,
-            };
-            allDNAData = [...allDNAData, data];
-          } else {
-            console.log("hi zoo filtering");
-            shortVideos = [...shortVideos, result.data.items[i]];
-            const tags = result.data.items[i].snippet.tags.slice(0, 10);
-            let data = {
-              agentId: email,
-              videoID: result.data.items[i].id,
-              videoTitle: result.data.items[i].snippet.title,
-              videoThumbnail:
-                result.data.items[i].snippet.thumbnails.medium.url,
-              videoDuration: result.data.items[i].contentDetails.duration,
-              uploadDate: result.data.items[i].snippet.publishedAt,
-              categoryID: result.data.items[i].snippet.categoryId,
-              channelID: result.data.items[i].snippet.channelId,
-              channelTitle: result.data.items[i].snippet.channelTitle,
-              description: result.data.items[i].snippet.description,
-              videoTags: tags,
-            };
-            allShortDNAData = [...allShortDNAData, data];
+        console.log(result.data.items[i].snippet.categoryId);
+        if (result.data.items[i].snippet.categoryId !== "10") {
+          if (result.data.items[i].snippet.tags != null) {
+            // To do list
+            // 1. 영상 길이를 통해 쇼츠 영상 구분
+            console.log("hi zoo");
+            console.log(
+              result.data.items[i].contentDetails.duration.includes("M")
+            );
+            if (
+              (result.data.items[i].contentDetails.duration.includes("M") ===
+                true ||
+                result.data.items[i].contentDetails.duration.includes("H") ===
+                  true) &&
+              result.data.items[i].contentDetails.duration.includes("PT1M") ===
+                false
+            ) {
+              console.log("hi zoo non filtering");
+              allVideos = [...allVideos, result.data.items[i]];
+              const tags = result.data.items[i].snippet.tags.slice(0, 10);
+              let data = {
+                agentId: email,
+                videoID: result.data.items[i].id,
+                videoTitle: result.data.items[i].snippet.title,
+                videoThumbnail:
+                  result.data.items[i].snippet.thumbnails.medium.url,
+                videoDuration: result.data.items[i].contentDetails.duration,
+                uploadDate: result.data.items[i].snippet.publishedAt,
+                categoryID: result.data.items[i].snippet.categoryId,
+                channelID: result.data.items[i].snippet.channelId,
+                channelTitle: result.data.items[i].snippet.channelTitle,
+                description: result.data.items[i].snippet.description,
+                videoTags: tags,
+                viewCount: result.data.items[i].statistics.viewCount,
+                likeCount: result.data.items[i].statistics.likeCount,
+                commentCount: result.data.items[i].statistics.commentCount,
+              };
+              allDNAData = [...allDNAData, data];
+            } else {
+              console.log("hi zoo filtering");
+              shortVideos = [...shortVideos, result.data.items[i]];
+              const tags = result.data.items[i].snippet.tags.slice(0, 10);
+              let data = {
+                agentId: email,
+                videoID: result.data.items[i].id,
+                videoTitle: result.data.items[i].snippet.title,
+                videoThumbnail:
+                  result.data.items[i].snippet.thumbnails.medium.url,
+                videoDuration: result.data.items[i].contentDetails.duration,
+                uploadDate: result.data.items[i].snippet.publishedAt,
+                categoryID: result.data.items[i].snippet.categoryId,
+                channelID: result.data.items[i].snippet.channelId,
+                channelTitle: result.data.items[i].snippet.channelTitle,
+                description: result.data.items[i].snippet.description,
+                videoTags: tags,
+                viewCount: result.data.items[i].statistics.viewCount,
+                likeCount: result.data.items[i].statistics.likeCount,
+                commentCount: result.data.items[i].statistics.commentCount,
+              };
+              allShortDNAData = [...allShortDNAData, data];
+            }
           }
         }
       }
@@ -227,59 +239,69 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
             },
           });
           for (let i = 0; i < result.data.items.length; i++) {
-            if (result.data.items[i].snippet.tags != null) {
-              // To do list
-              // 1. 영상 길이를 통해 쇼츠 영상 구분
-              console.log("hi zoo");
-              console.log(
-                result.data.items[i].contentDetails.duration.includes("M")
-              );
-              if (
-                (result.data.items[i].contentDetails.duration.includes("M") ===
-                  true ||
-                  result.data.items[i].contentDetails.duration.includes("H") ===
-                    true) &&
-                result.data.items[i].contentDetails.duration.includes(
-                  "PT1M"
-                ) === false
-              ) {
-                console.log("hi zoo non filtering");
-                allVideos = [...allVideos, result.data.items[i]];
-                const tags = result.data.items[i].snippet.tags.slice(0, 10);
-                let data = {
-                  agentId: email,
-                  videoID: result.data.items[i].id,
-                  videoTitle: result.data.items[i].snippet.title,
-                  videoThumbnail:
-                    result.data.items[i].snippet.thumbnails.medium.url,
-                  videoDuration: result.data.items[i].contentDetails.duration,
-                  uploadDate: result.data.items[i].snippet.publishedAt,
-                  categoryID: result.data.items[i].snippet.categoryId,
-                  channelID: result.data.items[i].snippet.channelId,
-                  channelTitle: result.data.items[i].snippet.channelTitle,
-                  description: result.data.items[i].snippet.description,
-                  videoTags: tags,
-                };
-                allDNAData = [...allDNAData, data];
-              } else {
-                console.log("hi zoo filtering");
-                shortVideos = [...shortVideos, result.data.items[i]];
-                const tags = result.data.items[i].snippet.tags.slice(0, 10);
-                let data = {
-                  agentId: email,
-                  videoID: result.data.items[i].id,
-                  videoTitle: result.data.items[i].snippet.title,
-                  videoThumbnail:
-                    result.data.items[i].snippet.thumbnails.medium.url,
-                  videoDuration: result.data.items[i].contentDetails.duration,
-                  uploadDate: result.data.items[i].snippet.publishedAt,
-                  categoryID: result.data.items[i].snippet.categoryId,
-                  channelID: result.data.items[i].snippet.channelId,
-                  channelTitle: result.data.items[i].snippet.channelTitle,
-                  description: result.data.items[i].snippet.description,
-                  videoTags: tags,
-                };
-                allShortDNAData = [...allShortDNAData, data];
+            if (result.data.items[i].snippet.categoryId !== "10") {
+              if (result.data.items[i].snippet.tags != null) {
+                // To do list
+                // 1. 영상 길이를 통해 쇼츠 영상 구분
+                console.log("hi zoo");
+                console.log(
+                  result.data.items[i].contentDetails.duration.includes("M")
+                );
+                if (
+                  (result.data.items[i].contentDetails.duration.includes(
+                    "M"
+                  ) === true ||
+                    result.data.items[i].contentDetails.duration.includes(
+                      "H"
+                    ) === true) &&
+                  result.data.items[i].contentDetails.duration.includes(
+                    "PT1M"
+                  ) === false
+                ) {
+                  console.log("hi zoo non filtering");
+                  allVideos = [...allVideos, result.data.items[i]];
+                  const tags = result.data.items[i].snippet.tags.slice(0, 10);
+                  let data = {
+                    agentId: email,
+                    videoID: result.data.items[i].id,
+                    videoTitle: result.data.items[i].snippet.title,
+                    videoThumbnail:
+                      result.data.items[i].snippet.thumbnails.medium.url,
+                    videoDuration: result.data.items[i].contentDetails.duration,
+                    uploadDate: result.data.items[i].snippet.publishedAt,
+                    categoryID: result.data.items[i].snippet.categoryId,
+                    channelID: result.data.items[i].snippet.channelId,
+                    channelTitle: result.data.items[i].snippet.channelTitle,
+                    description: result.data.items[i].snippet.description,
+                    videoTags: tags,
+                    viewCount: result.data.items[i].statistics.viewCount,
+                    likeCount: result.data.items[i].statistics.likeCount,
+                    commentCount: result.data.items[i].statistics.commentCount,
+                  };
+                  allDNAData = [...allDNAData, data];
+                } else {
+                  console.log("hi zoo filtering");
+                  shortVideos = [...shortVideos, result.data.items[i]];
+                  const tags = result.data.items[i].snippet.tags.slice(0, 10);
+                  let data = {
+                    agentId: email,
+                    videoID: result.data.items[i].id,
+                    videoTitle: result.data.items[i].snippet.title,
+                    videoThumbnail:
+                      result.data.items[i].snippet.thumbnails.medium.url,
+                    videoDuration: result.data.items[i].contentDetails.duration,
+                    uploadDate: result.data.items[i].snippet.publishedAt,
+                    categoryID: result.data.items[i].snippet.categoryId,
+                    channelID: result.data.items[i].snippet.channelId,
+                    channelTitle: result.data.items[i].snippet.channelTitle,
+                    description: result.data.items[i].snippet.description,
+                    videoTags: tags,
+                    viewCount: result.data.items[i].statistics.viewCount,
+                    likeCount: result.data.items[i].statistics.likeCount,
+                    commentCount: result.data.items[i].statistics.commentCount,
+                  };
+                  allShortDNAData = [...allShortDNAData, data];
+                }
               }
             }
           }
@@ -367,9 +389,6 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       let dnaTypeNames = [];
       // 좋아하는 영상 분석 결과에서 튜닝하기
       for (let i = 0; i < videoResult.length; i++) {
-        console.log(videoResult[i].dna);
-        console.log(videoResult[i].videoList);
-
         // 분석된 dna 모으기
         for (let j = 0; j < videoResult[i].dna.length; j++) {
           dnaTypeCollections = [...dnaTypeCollections, videoResult[i].dna[j]];
@@ -477,18 +496,66 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
     []
   );
 
+  const handleYoutubeDataSortByChannel = useCallback(
+    (videoData, userSubsData, userSubsChannels) => {
+      // 채널 ID 별 좋아요한 영상 누적 포맷으로 변경
+      const videoDataByChannel = videoData.reduce((acc, currentValue) => {
+        console.log(acc);
+        console.log(currentValue);
+        const existingItem = acc.find(
+          (item) => item.channelID === currentValue.channelID
+        );
+        console.log(existingItem);
+        // video의 모든 정보가 저장될 수 있도록 수정
+        if (existingItem) {
+          existingItem.videoID.push(currentValue);
+        } else {
+          acc.push({
+            channelID: currentValue.channelID,
+            videoID: [currentValue],
+          });
+        }
+        return acc;
+      }, []);
+      console.log(videoDataByChannel);
+      // 채널 ID 별 구독 여부 확인
+      videoDataByChannel.map((video) => {
+        console.log(video);
+        if (userSubsChannels.includes(video.channelID)) {
+          video["subs"] = true;
+        } else {
+          video["subs"] = false;
+        }
+        return video;
+      });
+      console.log(videoDataByChannel);
+      return videoDataByChannel;
+    },
+    []
+  );
   const handleAnalysisResult = useCallback(
     async (video, channel, batch) => {
       console.log(longLikedVideoData);
+      // 유저가 좋아요한 영상 데이터 불러오기
       const videoData = await handleYoutubeLikedVideo();
+      // 좋아요한 영상 카테고리 분석 결과
       const videoAnalysisResult = await handleLikedVideoProcessBatch(
         videoData,
         batch
       );
+      for (let i = 0; i < videoData.length; i++) {
+        videoData[i].dnatype = videoAnalysisResult[i].dna[0].dnatype;
+      }
+      console.log(videoAnalysisResult);
       const { userSubsData, userSubsChannels } = await handleYoutubeSubsData();
       console.log(userSubsData);
       userSubsData.sort((a, b) => new Date(b.subsDate) - new Date(a.subsDate));
       console.log(userSubsData);
+      const videoDataByChannel = handleYoutubeDataSortByChannel(
+        videoData,
+        userSubsData,
+        userSubsChannels
+      );
       const subsAnalysisResult = await handleSubsChannelProcessBatch([], batch);
       const { userChannelIDs, dnaTypeNames, dnaTypeCollections } =
         await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
@@ -504,12 +571,14 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       console.log(subsChannels);
       console.log(dnaTypeCollections);
       console.log(result);
+      console.log(videoDataByChannel);
       navigate(`/complete`, {
         state: {
           videoData: videoData,
           subsData: userSubsData,
           dnaTypeCollections: dnaTypeCollections,
           unknownResult: result,
+          videoDataByChannel: videoDataByChannel,
         },
       });
     },
@@ -518,6 +587,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       handleLikedVideoProcessBatch,
       handleResultTuning,
       handleSubsChannelProcessBatch,
+      handleYoutubeDataSortByChannel,
       handleYoutubeLikedVideo,
       handleYoutubeSubsData,
       longLikedVideoData,

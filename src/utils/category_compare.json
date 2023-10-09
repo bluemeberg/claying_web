@@ -34,7 +34,7 @@
   "Language Learning": "외국어 고수",
   "Art and Creativity": "창의력 대장",
   "Computer Programming": "코딩 천재",
-  "Business&Entrepreneurship": "경영자들",
+  "Business/Entrepreneurship": "경영자들",
   "Self Improvement & Motivation": "동기부여가",
   "Marketing": "마케터",
   "Humanities and Politics": "정의를 찾는 이",
@@ -50,5 +50,8 @@
   "Thriller/Horror Movies": "공포영화 매니아",
   "Romance Movies": "로맨스 매니아",
   "Animation Recap & Review": "애니메이션 매니아",
-  "News & Politics": "뉴스 수집가"
+  "News & Politics": "뉴스 수집가",
+  "Gameplay": " 게임 연구자",
+  "Vlogs": "생활탐방러",
+  "Sports": "스포츠 참견러"
 }

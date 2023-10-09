@@ -1,27 +1,28 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 
 import NavBar from "../../components/NavBar";
-import category from "./category_compare.json";
-import categoryReal from "./category_real.json";
+import category from "../../utils/category_compare.json";
+import categoryReal from "../../utils/category_real.json";
 import "./ResultPage.css";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import { Button } from "../AnalysisPage/AnalysisPageComponent";
 import Result1 from "./Result1";
 import Result2 from "./Result2";
 import Result3 from "./Result3";
 import ChannelModal from "../../components/ChannelModal";
 import { youtubeDataAPIInstacne, youtubeGeneralAPI } from "../../api/axios";
 import { getTimeAgo } from "../../utils/timeManipulate";
+import Result4 from "./Result4";
 const ResultPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   console.log(location.state);
   const dnaTypes = location.state.dnaTypeCollections.map((item) => ({
     ...item,
@@ -134,6 +135,8 @@ const ResultPage = () => {
     setChannelData(updateAddCountLikedVideos);
   }, [addCountLikedVideos]);
   console.log(data);
+  const [modalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
     handleYoutubeChannelData();
   }, []);
@@ -170,6 +173,7 @@ const ResultPage = () => {
               topDNAType={rankedArray[0].dnatype}
             />
           </SwiperSlide>
+          {/* videoDataByChannel 추가 후 채널 모달 창으로 채널 ID 기준 영상 데이터 모달 창으로 넘기기 */}
           <SwiperSlide>
             <Result3
               setModalOpen={setModalOpen}
@@ -177,9 +181,19 @@ const ResultPage = () => {
               userInfo={userInfo.displayName}
               topDNAType={rankedArray[0].dnatype}
               subsData={location.state.subsData}
+              videoDataByChannel={location.state.videoDataByChannel}
             />
           </SwiperSlide>
-          <SwiperSlide>Slide 2</SwiperSlide>
+          <SwiperSlide>
+            <Result4
+              setModalOpen={setModalOpen}
+              likedVideos={data}
+              userInfo={userInfo.displayName}
+              topDNAType={rankedArray[0].dnatype}
+              subsData={location.state.subsData}
+              videoDataByChannel={location.state.videoDataByChannel}
+            />
+          </SwiperSlide>
         </Swiper>
       );
     } else {
@@ -194,14 +208,24 @@ const ResultPage = () => {
         <SwiperSlide>Slide 2</SwiperSlide>
       </Swiper>;
     }
-  }, [data, location.state.unknownResult, rankedArray, userInfo.displayName]);
-  const [modalOpen, setModalOpen] = useState(false);
+  }, [
+    data,
+    location.state.subsData,
+    location.state.unknownResult,
+    location.state.videoDataByChannel,
+    rankedArray,
+    userInfo.displayName,
+  ]);
+  const handleButtonClick = useCallback(() => {
+    navigate("/find", { state: location.state });
+  }, []);
   return (
     <Container>
       <NavBar />
       <HandleSetting />
-      <ResultButton>나와 유사한 크리에이터 발견하기</ResultButton>
-      {modalOpen && <ChannelModal setModalOpen={setModalOpen} />}
+      <ResultButton onClick={handleButtonClick}>
+        나와 유사한 크리에이터 발견하기
+      </ResultButton>
     </Container>
   );
 };

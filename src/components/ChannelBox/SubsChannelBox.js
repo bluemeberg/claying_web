@@ -1,24 +1,85 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { styled } from "styled-components";
+import AfterRecommendPage from "../../pages/HookingPage/AfterRecommendPage";
+import { formatDateAgo } from "../../utils/formatSubsNumber";
 import { formatDate, getTimeAgo } from "../../utils/timeManipulate";
+import ChannelModal from "../ChannelModal";
+import RecommentResultModal from "../RecommmentResultModal";
 
 const SubsChannelBox = (props) => {
-  console.log(props.subsData);
+  console.log(props);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState();
+  const [selectedVideoDataByChannel, setSelectedVideoDataByChannel] =
+    useState();
+  const [resultModalOpen, setResultModalOpen] = useState(false);
+  const handleClick = useCallback(
+    (channel) => {
+      setModalOpen(true);
+      console.log(channel);
+      let result = null;
+      console.log(props.videoDataByChannel);
+      for (let i = 0; i < props.videoDataByChannel.length; i++) {
+        console.log(props.videoDataByChannel[i]);
+        if (props.videoDataByChannel[i].channelID === channel.channelID) {
+          result = props.videoDataByChannel[i];
+          console.log(result);
+          break;
+        }
+      }
+      console.log(result);
+      setSelectedVideoDataByChannel(result);
+      setSelectedChannel(channel);
+    },
+    [props.videoDataByChannel]
+  );
   return (
-    <SubsChannelContainer>
-      <SubsChannelThumbnail>
-        <img
-          src={props.subsData.channelThumbnail}
-          alt={props.subsData.channelTitle}
+    <div>
+      <SubsChannelContainer
+        onClick={() => handleClick(props.subsData)}
+        subs={props.subsData.subs}
+      >
+        <SubsChannelThumbnail>
+          <img
+            src={
+              typeof props.subsData.channelThumbnail === "object"
+                ? props.subsData.channelThumbnail.url
+                : props.subsData.channelThumbnail
+            }
+            alt={props.subsData.channelTitle}
+          />
+        </SubsChannelThumbnail>
+        <SubsChannelCategory></SubsChannelCategory>
+        <SubsChannelTitle subs={props.subsData.subs}>
+          {props.subsData.channelTitle}
+        </SubsChannelTitle>
+        <SubsChannelSubsCount></SubsChannelSubsCount>
+        {props.subsDuring === "true" ? (
+          <SubsChannelDate subs={props.subsData.subs}>
+            {props.subsData.subs === false
+              ? "미구독"
+              : "구독기간:" + formatDateAgo(props.subsData.subsDate)}
+          </SubsChannelDate>
+        ) : (
+          <SubsChannelDate subs={props.subsData.subs}>
+            {props.subsData.subs === false
+              ? "미구독"
+              : "구독일:" + formatDate(props.subsData.subsDate)}
+          </SubsChannelDate>
+        )}
+      </SubsChannelContainer>
+      {modalOpen && (
+        <ChannelModal
+          setModalOpen={setModalOpen}
+          selectedChannel={selectedChannel}
+          selectedVideoDataByChannel={selectedVideoDataByChannel}
+          setResultModalOpen={setResultModalOpen}
         />
-      </SubsChannelThumbnail>
-      <SubsChannelCategory></SubsChannelCategory>
-      <SubsChannelTitle>{props.subsData.channelTitle}</SubsChannelTitle>
-      <SubsChannelSubsCount></SubsChannelSubsCount>
-      <SubsChannelDate>
-        구독일:{formatDate(props.subsData.subsDate)}
-      </SubsChannelDate>
-    </SubsChannelContainer>
+      )}
+      {resultModalOpen && (
+        <RecommentResultModal setResultModalOpen={setResultModalOpen} />
+      )}
+    </div>
   );
 };
 
@@ -27,16 +88,17 @@ export default SubsChannelBox;
 const SubsChannelContainer = styled.div`
   display: flex;
   width: 100px;
-  height: 150px;
+  height: 140px;
   padding: 8px 0px 12px 0px;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
   border-radius: 8px;
-  background: #fff;
+  background: ${(props) => (props.subs === false ? "#3C95FF" : "#fff")};
   margin-left: 4px;
   margin-right: 4px;
   margin-top: 24px;
+  justify-content: center;
 `;
 
 const SubsChannelThumbnail = styled.div`
@@ -69,7 +131,7 @@ const SubsChannelCategory = styled.div`
 `;
 
 const SubsChannelTitle = styled.div`
-  color: #000;
+  color: ${(props) => (props.subs === false ? "#fff" : "#000")};
   font-family: Pretendard;
   font-size: 14px;
   font-style: normal;
@@ -80,7 +142,9 @@ const SubsChannelTitle = styled.div`
   max-height: 30px;
   margin-bottom: 8px;
   display: flex;
-  align-items: center;
+  align-items: center
+  margin-left : 4px;
+  margin-right : 4px;
 `;
 
 const SubsChannelSubsCount = styled.div`
@@ -93,7 +157,7 @@ const SubsChannelSubsCount = styled.div`
 `;
 
 const SubsChannelDate = styled.div`
-  color: #000;
+  color: ${(props) => (props.subs === false ? "#fff" : "#000")};
   font-family: Pretendard;
   font-size: 12px;
   font-style: normal;

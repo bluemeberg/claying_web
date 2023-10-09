@@ -7,7 +7,7 @@ import ProgressBar from "../../components/ProgressBar";
 import { useDNAAnalysisData } from "../../hooks/useDNAAnalysisData";
 import { useYoutubeAnalysisData } from "../../hooks/useYoutubeAnalysisData";
 import { AnalysisCount, Button, Caution } from "./AnalysisPageComponent";
-import category from "./category_real.json";
+import category from "../../utils/category_real.json";
 const AnalysisPage = () => {
   const location = useLocation();
   console.log(location);

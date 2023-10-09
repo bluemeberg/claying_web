@@ -1,13 +1,12 @@
 import React from "react";
 import { styled } from "styled-components";
-import category from "./category_compare.json";
-import categoryReal from "./category_real.json";
+import category from "../../utils/category_compare.json";
 const Result1 = (props) => {
   console.log(props);
 
   return (
     <Container>
-      <SubTitle>{props.userInfo.displayName}님이 크리에이터가 된다면 </SubTitle>
+      <SubTitle>{props.userInfo}님이 크리에이터가 된다면 </SubTitle>
       <SubTitle type="rank">1st</SubTitle>
       {/* <Title region="en">{props.topDNAType}</Title> */}
       <Title>{category[props.topDNAType]}</Title>

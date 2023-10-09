@@ -3,14 +3,42 @@ import { styled } from "styled-components";
 import { youtubeDataAPIInstacne, youtubeGeneralAPI } from "../../api/axios";
 import SubsChannelBox from "../../components/ChannelBox/SubsChannelBox";
 import VideoBox from "../../components/VideoBox/VideoBox";
-import category from "./category_compare.json";
+import category from "../../utils/category_compare.json";
 
 const Result3 = (props) => {
   console.log(props);
 
+  // 6개 구독채널에 대한 채널 정보 받아오기
+  const handleGetSubsChannelInfo = useCallback(async () => {
+    for (let i = 0; i < props.subsData.slice(0, 6).length; i++) {
+      const response = await youtubeDataAPIInstacne.get("/channels", {
+        params: {
+          id: props.subsData[i].channelID,
+          part: "snippet, brandingSettings,statistics",
+          key: youtubeGeneralAPI,
+        },
+      });
+      console.log(response.data);
+      if (response.data.items[0].brandingSettings.image !== undefined) {
+        const channelBanner =
+          response.data.items[0].brandingSettings.image.bannerExternalUrl;
+        props.subsData[i]["channelBanner"] = channelBanner;
+      }
+      props.subsData[i]["subsCount"] =
+        response.data.items[0].statistics.subscriberCount;
+      props.subsData[i]["videoCount"] =
+        response.data.items[0].statistics.videoCount;
+      props.subsData[i]["viewCount"] =
+        response.data.items[0].statistics.viewCount;
+    }
+  }, [props.subsData]);
+  console.log(props);
+  useEffect(() => {
+    handleGetSubsChannelInfo();
+  }, []);
   return (
     <Container>
-      <SubTitle>{props.userInfo.displayName}님이 크리에이터가 된다면 </SubTitle>
+      <SubTitle>{props.userInfo}님이 크리에이터가 된다면 </SubTitle>
       <SubTitle type="rank">1st</SubTitle>
       {/* <Title region="en">{props.topDNAType}</Title> */}
       <Title>{category[props.topDNAType]}</Title>
@@ -21,6 +49,7 @@ const Result3 = (props) => {
             key={index}
             subsData={data}
             setModalOpen={props.setModalOpen}
+            videoDataByChannel={props.videoDataByChannel}
           />
         ))}
       </SubsContainer>
@@ -31,6 +60,7 @@ const Result3 = (props) => {
             key={index}
             likedVideo={data}
             setModalOpen={props.setModalOpen}
+            videoDataByChannel={props.videoDataByChannel}
           />
         ))}
       </VideoContainer>

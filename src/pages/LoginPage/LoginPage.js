@@ -39,12 +39,13 @@ const LoginPage = () => {
           잠깐! <br></br> 접근을 허용해주세요.
         </Title>
         <SubTitle>
-          이 테스트에서는 유튜브 활동 데이터가 필요해요.<br></br> 유튜브에
-          접근할 수 있도록 구글 계정을 로그인해주세요.
+          클레잉 콘텐츠 성향 분석 테스트에서는 <br></br>유튜브 좋아요한 영상,
+          구독 채널 정보가 필요해요. <br></br>유튜브에 접근할 수 있도록 구글
+          계정을 로그인해주세요.
         </SubTitle>
         <SubTitle kind="caution">
-          단, 본 테스트에서는 분석에 활용되는 <br></br>유튜브 활동 데이터를 분석
-          후 저장하지 않습니다.
+          단, 본 테스트에서는 유저 식별이 가능한 형태로<br></br>유튜브 활동
+          데이터를 저장하지 않습니다.
         </SubTitle>
         <GoogleButton onClick={handleAuth}>
           <img src="/images/Google.svg" alt="google" /> Google 계정으로 시작하기
@@ -88,12 +89,12 @@ const Title = styled.div`
 `;
 
 const SubTitle = styled.div`
-  color: #fff;
+  color: ${(props) => (props.kind === "caution" ? "#FFBB54" : "#fff")};
   text-align: center;
   font-family: Pretendard;
   font-size: 14px;
   font-style: ${(props) => (props.kind === "caution" ? "italic" : "normal")};
-  font-weight: 400;
+  font-weight: ${(props) => (props.kind === "caution" ? "900" : "400")};
   line-height: 24px; /* 171.429% */
   margin-bottom: 24px;
 `;

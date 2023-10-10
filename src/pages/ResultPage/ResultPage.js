@@ -218,7 +218,8 @@ const ResultPage = () => {
   ]);
   const handleButtonClick = useCallback(() => {
     navigate("/find", { state: location.state });
-  }, []);
+  }, [location.state, navigate]);
+
   return (
     <Container>
       <NavBar />
@@ -233,13 +234,13 @@ const ResultPage = () => {
 export default ResultPage;
 
 const Container = styled.div`
-  position: relative;
+  position: fixed;
   min-height: 100vh;
+  min-width: 100vw;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 calc(3.5vw + 5px);
   background-color: #f1faff;
 `;
 

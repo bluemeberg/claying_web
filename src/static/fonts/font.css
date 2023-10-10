@@ -2,10 +2,9 @@
   font-family: "Pretendard";
   font-display: fallback;
 
-  src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
-    format("woff");
+  src: url("./Pretendard-Regular.otf") format("opentype");
 
   /* 사용할 폰트의 기본 스타일 */
-  font-weight: 400;
+  font-weight: 700;
   font-style: normal;
 }

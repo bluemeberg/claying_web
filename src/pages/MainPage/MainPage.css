@@ -1,0 +1,12 @@
+.image-container {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.image-container.fade-in {
+  opacity: 1;
+}
+
+.image-container.fade-out {
+  opacity: 0;
+}

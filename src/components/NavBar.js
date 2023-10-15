@@ -167,4 +167,5 @@ const TextLogo = styled.div`
   line-height: normal;
   display: flex;
   align-items: center;
+  margin-left: -12px;
 `;

@@ -12,7 +12,7 @@ const LoginPage = () => {
   const handleAuth = async () => {
     const result = await signInWithPopup(auth, provider);
     localStorage.setItem("userData", JSON.stringify(result.user));
-
+    
     navigate(`/analysis`, {
       state: {
         photoUrl: result.user.photoURL,

@@ -49,7 +49,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       console.log(nextSubsPageToken);
       console.log("subs", resultSubs.data);
       // channelID, channelThumbnail
-
+      
       for (let i = 0; i < resultSubs.data.items.length; i++) {
         // channelID, channelThumbnail, channelTitle, channelSubscribers, subsDuration, channelDescription
         let channelID = resultSubs.data.items[i].snippet.resourceId.channelId;

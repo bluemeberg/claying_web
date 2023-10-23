@@ -1,15 +1,63 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
 
 const CompletionPage = () => {
+  const images = [
+    "/images/character/basketball.svg",
+    "/images/character/car.svg",
+    "/images/character/fitness.svg",
+    "/images/character/motivation.svg",
+    "/images/character/petsLover.svg",
+    "/images/character/petVlog.svg",
+    "/images/character/playlistMania.svg",
+    "/images/character/traveller.svg",
+  ];
+
+  const tempImages = [
+    "/images/character/temp/movie.svg",
+    "/images/character/temp/ittech.svg",
+    "/images/character/temp/pet.svg",
+    "/images/character/temp/selfimporvement.svg",
+    "/images/character/temp/show.svg",
+    "/images/character/temp/soccer.svg",
+    "/images/character/temp/business.svg",
+    "/images/character/temp/car.svg",
+    "/images/character/temp/comedy.svg",
+    "/images/character/temp/game.svg",
+    "/images/character/temp/makeupbeauty.svg",
+  ];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [fadeIn, setFadein] = useState(true);
+
+  const handleNextImage = useCallback(() => {
+    setFadein(false);
+    setTimeout(() => {
+      setCurrentImageIndex((prevInex) =>
+        prevInex === images.length - 1 ? 0 : prevInex + 1
+      );
+      setFadein(true);
+    }, 300);
+  }, [images.length]);
   const location = useLocation();
   console.log(location.state);
   const navigate = useNavigate();
   const handleButtonClick = useCallback(() => {
     navigate("/result", { state: location.state });
   }, [location.state, navigate]);
+  useEffect(() => {
+    if (location.state === null) {
+      navigate("/login", {});
+    }
+    const timer = setTimeout(() => {
+      handleNextImage();
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [currentImageIndex]);
+
   return (
     <Container>
       <NavBar color="white" />
@@ -18,7 +66,10 @@ const CompletionPage = () => {
         내가 유튜버라면<br></br> 어떤 크리에이터일까?
       </Title>
       <Banner>
-        <img src="/images/TestBanner.svg" alt="banner" />
+        <img
+          src={tempImages[currentImageIndex]}
+          alt={`Image${currentImageIndex}`}
+        />
       </Banner>
       <Button onClick={handleButtonClick}>결과 확인하기</Button>
     </Container>
@@ -64,13 +115,11 @@ const Title = styled.div`
 const Banner = styled.div`
   margin-top: 28px;
   img {
-    width: 192.91px;
-    height: 177px;
+    height: 30vh;
   }
 `;
 
 const Button = styled.div`
-  display: flex;
   width: 312px;
   max-height: 18px;
   padding: 18px 0px;
@@ -89,5 +138,7 @@ const Button = styled.div`
   display: flex;
   flex: 1;
   margin-bottom: 68px;
+  position: absolute;
+  bottom: 0;
   cursor: pointer;
 `;

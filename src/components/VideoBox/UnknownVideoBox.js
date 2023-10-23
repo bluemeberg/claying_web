@@ -10,13 +10,19 @@ const UnknownVideoBox = (props) => {
   // top100 선정된 날짜
   return (
     <VideoContainer>
-      <VideoCategory>{props.hotVideo.detailCategory}</VideoCategory>
+      <VideoCategory>{props.hotVideo.detail_category}</VideoCategory>
       <VideoThumbnail>
-        <img src={props.hotVideo.videoThumbnail} alt={props.hotVideo.videoID} />
+        <iframe
+          width="300"
+          height="168.75"
+          src={`https://www.youtube.com/embed/${props.hotVideo.id}`}
+          title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        ></iframe>
       </VideoThumbnail>
-      <VideoTitle>{props.hotVideo.videoTitle}</VideoTitle>
+      <VideoTitle>{props.hotVideo.title}</VideoTitle>
       <VideoInformation>
-        조회수 * 인기급상승 {getTimeAgo(props.hotVideo.hotTime)}
+        인기급상승 {getTimeAgo(props.hotVideo.hot_time)}
       </VideoInformation>
     </VideoContainer>
   );

@@ -14,7 +14,7 @@
   "Football": "미식축구 매니아",
   "Swimming": "인어족",
   "Golf": "골프신동",
-  "Fitness and Training": "근수저",
+  "Fitness": "근수저",
   "Travel Vlogs": "여행 매니아",
   "Game Tips & Info (Reviews / Ranking)": "게임 연구자",
   "Personal Blogs": "브이로그 엿보미",
@@ -41,6 +41,7 @@
   "Career and Vocational Guidance": "커리어 파인더",
   "Scientific Theories and Concepts & Experiments": "과학도",
   "IT/Tech": "얼리아답터",
+  "IT/Tech Reviews": "얼리아답터",
   "Space and Astronomy": "우주탐험가",
   "Robotics Engineering and Mobility": "아이언맨",
   "Environment and Sustainability": "자연인",
@@ -53,5 +54,15 @@
   "News & Politics": "뉴스 수집가",
   "Gameplay": " 게임 연구자",
   "Vlogs": "생활탐방러",
-  "Sports": "스포츠 참견러"
+  "Sports": "스포츠 참견러",
+  "News/Politics": "뉴스 수집가",
+  "Fashion/Style": "패셔니스타",
+  "Makeup/Beauty": "뷰티 매니아",
+  "Space/Astronomy": "우주 탐험가",
+  "PersonalBlogs": "브이로그 엿보미",
+  "Shows/Talk Shows": "예능덕후",
+  "Drama Movies": "드라마 덕후",
+  "History/Culture": "역사 문화 교수",
+  "SelfImprovement/Motivation": "자기 계발의 신",
+  "Documentary Movies": "영화 매니아"
 }

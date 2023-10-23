@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -20,23 +20,36 @@ import ChannelModal from "../../components/ChannelModal";
 import { youtubeDataAPIInstacne, youtubeGeneralAPI } from "../../api/axios";
 import { getTimeAgo } from "../../utils/timeManipulate";
 import Result4 from "./Result4";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 const ResultPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   console.log(location.state);
-  const dnaTypes = location.state.dnaTypeCollections.map((item) => ({
+  let dnaTypeCollections = [];
+  let subsData = [];
+  let unknownResult = [];
+  let videoDataByChannel = [];
+  if (location.state !== null) {
+    dnaTypeCollections = location.state.dnaTypeCollections;
+    subsData = location.state.subsData;
+    unknownResult = location.state.unknownResult;
+    videoDataByChannel = location.state.videoDataByChannel;
+  }
+  const dnaTypes = dnaTypeCollections.map((item) => ({
     ...item,
-    category: categoryReal[item.dnatype],
+    category: categoryReal[item.dna_type],
   }));
   console.log(dnaTypes);
   console.log(window.scrollY);
   // 전체 dnacount 총합 계산
-  const totalCount = dnaTypes.reduce((sum, item) => sum + item.dnacount, 0);
+  const totalCount = dnaTypes.reduce((sum, item) => sum + item.count, 0);
 
   // 각 객체에 dnacount 비중(%) 추가
   const dataArrayWithPercentage = dnaTypes.map((item) => ({
     ...item,
-    percentage: ((item.dnacount / totalCount) * 100).toFixed(1),
+    percentage: ((item.count / totalCount) * 100).toFixed(1),
   }));
   console.log(dataArrayWithPercentage);
   let currentRank = 0;
@@ -44,10 +57,7 @@ const ResultPage = () => {
 
   // 순위 정보 추가
   const rankedArray = dataArrayWithPercentage.map((item, index) => {
-    if (
-      index > 0 &&
-      item.dnacount === dataArrayWithPercentage[index - 1].dnacount
-    ) {
+    if (index > 0 && item.count === dataArrayWithPercentage[index - 1].count) {
       currentRankCount++;
     } else {
       currentRank += currentRankCount;
@@ -61,20 +71,25 @@ const ResultPage = () => {
   console.log(rankedArray);
   let userInfo = localStorage.getItem("userData");
   userInfo = JSON.parse(userInfo);
-  let addCountLikedVideos = location.state.videoData.map((data) => {
+  let videoData = [];
+  if (location.state !== null) {
+    videoData = location.state.videoData;
+  }
+  let addCountLikedVideos = videoData.map((data) => {
     data.channelCount = 1;
     return data;
   });
   console.log(addCountLikedVideos);
 
   let sortLikedVideos = addCountLikedVideos.reduce((result, item) => {
-    if (item.channelID) {
-      const existingItem = result.find((x) => x.channelID === item.channelID);
+    console.log(item);
+    if (item.channel_id) {
+      const existingItem = result.find((x) => x.channel_id === item.channel_id);
       if (existingItem) {
         existingItem.channelCount += item.channelCount;
       } else {
         result.push({
-          channelID: item.channelID,
+          channelID: item.channel_id,
           channelCount: item.channelCount,
           channelTitle: item.channelTitle,
         });
@@ -87,58 +102,60 @@ const ResultPage = () => {
   );
   console.log(sortLikedVideos);
   const [data, setChannelData] = useState([]);
-  const handleYoutubeChannelData = useCallback(async () => {
-    const updateAddCountLikedVideos = await Promise.all(
-      addCountLikedVideos.map(async (channel) => {
-        const response = await youtubeDataAPIInstacne.get("/channels", {
-          params: {
-            id: channel.channelID,
-            part: "snippet, brandingSettings,statistics",
-            key: youtubeGeneralAPI,
-          },
-        });
-        console.log(response.data);
-        const channelThumbnail =
-          response.data.items[0].snippet.thumbnails.default;
-        const subsCount = response.data.items[0].statistics.subscriberCount;
-        const videoCount = response.data.items[0].statistics.videoCount;
-        const viewCount = response.data.items[0].statistics.viewCount;
-        let channelDescription = "";
-        if (response.data.items[0].snippet.description !== undefined) {
-          channelDescription = response.data.items[0].snippet.description;
-        }
-        if (response.data.items[0].brandingSettings.image !== undefined) {
-          const channelBanner =
-            response.data.items[0].brandingSettings.image.bannerExternalUrl;
-          console.log(channelBanner);
-          return {
-            ...channel,
-            channelThumbnail,
-            channelBanner,
-            subsCount,
-            videoCount,
-            viewCount,
-            channelDescription,
-          };
-        }
-        return {
-          ...channel,
-          channelThumbnail,
-          subsCount,
-          videoCount,
-          viewCount,
-          channelDescription,
-        };
-      })
-    );
-    console.log(updateAddCountLikedVideos);
-    setChannelData(updateAddCountLikedVideos);
-  }, [addCountLikedVideos]);
+  // const handleYoutubeChannelData = useCallback(async () => {
+  //   const updateAddCountLikedVideos = await Promise.all(
+  //     addCountLikedVideos.map(async (channel) => {
+  //       const response = await youtubeDataAPIInstacne.get("/channels", {
+  //         params: {
+  //           id: channel.channelID,
+  //           part: "snippet, brandingSettings,statistics",
+  //           key: youtubeGeneralAPI,
+  //         },
+  //       });
+  //       console.log(response.data);
+  //       const channelThumbnail =
+  //         response.data.items[0].snippet.thumbnails.default;
+  //       const subsCount = response.data.items[0].statistics.subscriberCount;
+  //       const videoCount = response.data.items[0].statistics.videoCount;
+  //       const viewCount = response.data.items[0].statistics.viewCount;
+  //       let channelDescription = "";
+  //       if (response.data.items[0].snippet.description !== undefined) {
+  //         channelDescription = response.data.items[0].snippet.description;
+  //       }
+  //       if (response.data.items[0].brandingSettings.image !== undefined) {
+  //         const channelBanner =
+  //           response.data.items[0].brandingSettings.image.bannerExternalUrl;
+  //         console.log(channelBanner);
+  //         return {
+  //           ...channel,
+  //           channelThumbnail,
+  //           channelBanner,
+  //           subsCount,
+  //           videoCount,
+  //           viewCount,
+  //           channelDescription,
+  //         };
+  //       }
+  //       return {
+  //         ...channel,
+  //         channelThumbnail,
+  //         subsCount,
+  //         videoCount,
+  //         viewCount,
+  //         channelDescription,
+  //       };
+  //     })
+  //   );
+  //   console.log(updateAddCountLikedVideos);
+  //   setChannelData(updateAddCountLikedVideos);
+  // }, [addCountLikedVideos]);
   console.log(data);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    handleYoutubeChannelData();
+    if (location.state === null) {
+      navigate("/login", {});
+    }
   }, []);
   const HandleSetting = useCallback(() => {
     // 배열에서 가장 큰 percentage 값을 찾기
@@ -157,64 +174,133 @@ const ResultPage = () => {
     console.log(maxPercentageItems.length);
     if (maxPercentageItems.length === 1) {
       return (
-        <Swiper pagination={true} modules={[Pagination]} className="mySwiper">
-          <SwiperSlide>
-            <Result1
-              dnaInfoData={location.state.unknownResult}
-              dnaMaxCountInfo={maxPercentageItems}
-              userInfo={userInfo.displayName}
-              topDNAType={rankedArray[0].dnatype}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Result2
-              dnaInfoData={rankedArray}
-              userInfo={userInfo.displayName}
-              topDNAType={rankedArray[0].dnatype}
-            />
-          </SwiperSlide>
-          {/* videoDataByChannel 추가 후 채널 모달 창으로 채널 ID 기준 영상 데이터 모달 창으로 넘기기 */}
-          <SwiperSlide>
-            <Result3
-              setModalOpen={setModalOpen}
-              likedVideos={data}
-              userInfo={userInfo.displayName}
-              topDNAType={rankedArray[0].dnatype}
-              subsData={location.state.subsData}
-              videoDataByChannel={location.state.videoDataByChannel}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Result4
-              setModalOpen={setModalOpen}
-              likedVideos={data}
-              userInfo={userInfo.displayName}
-              topDNAType={rankedArray[0].dnatype}
-              subsData={location.state.subsData}
-              videoDataByChannel={location.state.videoDataByChannel}
-            />
-          </SwiperSlide>
-        </Swiper>
+        <>
+          <div className="prev">
+            {" "}
+            <img src="/images/LeftArrow.svg" alt="leftArrow" />
+          </div>
+          <div className="next">
+            {" "}
+            <img src="/images/RightArrow.svg" alt="rightArrow" />
+          </div>
+          <Swiper
+            pagination={true}
+            navigation={{
+              nextEl: ".next",
+              prevEl: ".prev",
+            }}
+            modules={[Pagination, Navigation]}
+            className="mySwiper"
+          >
+            <SwiperSlide>
+              <Result1
+                dnaInfoData={unknownResult}
+                dnaMaxCountInfo={maxPercentageItems}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+              />
+            </SwiperSlide>
+            <SwiperSlide>
+              <Result2
+                dnaInfoData={rankedArray}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+                videoDataByChannel={videoDataByChannel}
+              />
+            </SwiperSlide>
+            {/* videoDataByChannel 추가 후 채널 모달 창으로 채널 ID 기준 영상 데이터 모달 창으로 넘기기 */}
+            <SwiperSlide>
+              <Result3
+                setModalOpen={setModalOpen}
+                likedVideos={addCountLikedVideos}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+                subsData={subsData}
+                videoDataByChannel={videoDataByChannel}
+              />
+            </SwiperSlide>
+            <SwiperSlide>
+              <Result4
+                setModalOpen={setModalOpen}
+                likedVideos={data}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+                subsData={subsData}
+                videoDataByChannel={videoDataByChannel}
+              />
+            </SwiperSlide>
+          </Swiper>
+        </>
       );
     } else {
       // 복수개 최상위 비중 dnaTitle 발생 시 result1 페이지를 복수개로 slide 생성시키고,
       //  상세 결과 확인하기 버튼 depth 추가를 통해 상세 결과 페이지로 이동시키기
-      <Swiper pagination={true} modules={[Pagination]} className="mySwiper">
-        {maxPercentageItems.map((item, index) => (
-          <SwiperSlide key={index}>
-            <Result1 />
-          </SwiperSlide>
-        ))}
-        <SwiperSlide>Slide 2</SwiperSlide>
-      </Swiper>;
+      return (
+        <>
+          <div className="prev">
+            <img src="/images/LeftArrow.svg" alt="leftArrow" />
+          </div>
+          <div className="next">
+            <img src="/images/RightArrow.svg" alt="rightArrow" />
+          </div>
+          <Swiper
+            pagination={true}
+            navigation={{
+              nextEl: ".next",
+              prevEl: ".prev",
+            }}
+            modules={[Pagination, Navigation]}
+            className="mySwiper"
+          >
+            <SwiperSlide>
+              <Result1
+                dnaInfoData={unknownResult}
+                dnaMaxCountInfo={maxPercentageItems}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+              />
+            </SwiperSlide>
+            <SwiperSlide>
+              <Result2
+                dnaInfoData={rankedArray}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+                videoDataByChannel={videoDataByChannel}
+              />
+            </SwiperSlide>
+            {/* videoDataByChannel 추가 후 채널 모달 창으로 채널 ID 기준 영상 데이터 모달 창으로 넘기기 */}
+            <SwiperSlide>
+              <Result3
+                setModalOpen={setModalOpen}
+                likedVideos={data}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+                subsData={subsData}
+                videoDataByChannel={videoDataByChannel}
+              />
+            </SwiperSlide>
+            <SwiperSlide>
+              <Result4
+                setModalOpen={setModalOpen}
+                likedVideos={data}
+                userInfo={userInfo.displayName}
+                topDNAType={rankedArray[0].dna_type}
+                subsData={subsData}
+                videoDataByChannel={videoDataByChannel}
+              />
+            </SwiperSlide>
+          </Swiper>
+        </>
+      );
     }
   }, [
-    data,
-    location.state.subsData,
-    location.state.unknownResult,
-    location.state.videoDataByChannel,
     rankedArray,
+    unknownResult,
     userInfo.displayName,
+    videoDataByChannel,
+    addCountLikedVideos,
+    subsData,
+    data,
   ]);
   const handleButtonClick = useCallback(() => {
     navigate("/find", { state: location.state });

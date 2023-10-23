@@ -135,14 +135,14 @@ const FindChannelCategory = (props) => {
   }
   console.log(selectedElements);
   selectedElements.sort((a, b) => {
-    return a.channelSubscribeCount - b.channelSubscribeCount;
+    return a.channel.sub_count - b.channel.sub_count;
   });
 
   console.log(selectedElements);
   return (
     <Container>
       <Title>이 채널, 좋아하실 것 같아요!</Title>
-      <CategoryTitle>{category[props.unknown.detailCategory]}</CategoryTitle>
+      <CategoryTitle>{category[props.unknown.dna_type]}</CategoryTitle>
       <SubsContainer>
         {selectedElements.map((data, idex) => (
           <NewChannelBox props={data} />

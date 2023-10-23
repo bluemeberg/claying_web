@@ -1,22 +1,42 @@
 import React from "react";
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Label,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { css, styled } from "styled-components";
 import category from "../../utils/category_compare.json";
 import categoryReal from "../../utils/category_real.json";
 import "./Result2.css";
+
 const Result2 = (props) => {
   console.log(props);
+  const totalVideoCount = props.dnaInfoData.reduce((accumulator, item) => {
+    return accumulator + item.count;
+  }, 0);
+  console.log(totalVideoCount);
+
   const data = props.dnaInfoData.map((item) => {
     return {
-      name: item.dnatype,
-      value: item.dnacount,
+      name: category[item.dna_type],
+      value: item.count,
       category: item.category,
       percentage: item.percentage,
       rank: item.rank,
+      customLabel: item.category + item.percentage + "%",
     };
   });
   console.log(data);
-  const data7 = data.slice(0, 6);
+  const data9 = data.slice(0, 8);
   const remainData = data.slice(3, 7);
   console.log(remainData);
   const CHART_COLORS = [
@@ -29,34 +49,58 @@ const Result2 = (props) => {
     "F9C8FF",
   ];
 
-  const LEGEND_COLORS = ["#2FA8FF", "#63C7FF", "#F96C4C"];
-
   const RADIAN = Math.PI / 180;
 
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index,
-  }) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  // 커스텀 바 그래프 모양을 정의하는 컴포넌트
+  const CustomBarShape = (props) => {
+    const { x, y, width, height, fill } = props;
     return (
-      <text
+      <rect
         x={x}
         y={y}
-        fill="white"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
+        width={width}
+        height={height}
+        fill={fill}
+        rx={5}
+        ry={5}
+      />
     );
   };
+  // YAxis의 각 tick에 배경색을 주는 함수
+  const renderYAxisTick = (props) => {
+    const { x, y, payload, index } = props;
+    console.log(props);
+    // 상위 3개 데이터에 대한 스타일 적용
+    let backgroundColor = "transparent";
+    if (index === 0 || index === 1 || index === 2) {
+      backgroundColor = "yellow"; // 원하는 배경색 설정
+    }
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <rect x={-15} y={-5} width={20} height={20} fill={backgroundColor} />
+        <text
+          x={100}
+          y={-5}
+          dy={16}
+          textAnchor="end"
+          fill="#666"
+          fontSize={12}
+          width={100}
+        >
+          {payload.value}
+        </text>
+      </g>
+    );
+  };
+
+  // 커스텀 레이블 컴포넌트 정의
+  const CustomLabel = ({ customText }) => (
+    <text x={0} y={0} dy={-16} textAnchor="middle" fill="#666">
+      {customText}
+    </text>
+  );
+
   console.log(window.innerHeight);
   return (
     <Container>
@@ -67,65 +111,131 @@ const Result2 = (props) => {
         <SubTitle type="rank">1st</SubTitle>
         {/* <Title region="en">{props.topDNAType}</Title> */}
         <Title>{category[props.topDNAType]}</Title>
+        <Tip>총 {totalVideoCount}개의 좋아요한 영상 분석한 결과, %</Tip>
         <div className="col-md-8">
-          <ResponsiveContainer
-            width={window.innerHeight * 0.25}
-            height={window.innerHeight * 0.25}
-            className="text-center"
-          >
-            <PieChart
-              width={window.innerHeight * 0.25}
-              height={window.innerHeight * 0.25}
-            >
-              {/* <Legend layout="vertical" verticalAlign="top" align="top" /> */}
-              <Pie
-                data={data7}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={window.innerHeight * 0.25 * 0.45}
+          <YLabel>
+            {data.map((entry, index) => {
+              if (index === 0) {
+                return (
+                  <YLabelElement1>
+                    1. {entry.name}
+                    <br />
+                    <YLabelSubElement>
+                      ({entry.category}, {entry.percentage}%)
+                    </YLabelSubElement>
+                  </YLabelElement1>
+                );
+              } else if (index === 1) {
+                return (
+                  <YLabelElement2>
+                    2. {entry.name} <br />
+                    <YLabelSubElement>
+                      ({entry.category}, {entry.percentage}%)
+                    </YLabelSubElement>
+                  </YLabelElement2>
+                );
+              } else if (index === 2) {
+                return (
+                  <YLabelElement3>
+                    3. {entry.name} <br />
+                    <YLabelSubElement>
+                      ({entry.category}, {entry.percentage}%)
+                    </YLabelSubElement>
+                  </YLabelElement3>
+                );
+              } else {
+                return (
+                  <YLabelElement>
+                    {entry.name}
+                    <br />
+                    <YLabelSubElement>
+                      ({entry.category}, {entry.percentage}%)
+                    </YLabelSubElement>
+                  </YLabelElement>
+                );
+              }
+            })}
+          </YLabel>
+          <ChartComponent>
+            <BarChart width={300} height={420} data={data9} layout="vertical">
+              <XAxis
+                type="number"
+                dataKey="percentage"
+                interval={0} // 간격을 0으로 설정
+                orientation="top"
+                hide={true}
+                domain={[0, 50]}
+              />
+              <YAxis
+                dataKey="name"
+                type="category"
+                hide={true}
+                label={{
+                  angle: -90,
+                  position: "insideLeft",
+                  width: 100,
+                }}
+                tick={renderYAxisTick} // 모든 눈금 레이블의 폰트 크기를 12px로 설정
+              />
+              <Bar
+                dataKey="percentage"
+                barSize={32}
+                shape={<CustomBarShape />}
                 fill="#8884d8"
-                dataKey="value"
-                startAngle={0}
+                label={{ position: "right" }}
               >
                 {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                  />
+                  <>
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={CHART_COLORS[index % 20]}
+                    />
+                  </>
                 ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+              </Bar>
+            </BarChart>
+            <BarChart
+              width={300}
+              height={368}
+              data={data.slice(8, data.length)}
+              layout="vertical"
+            >
+              <XAxis
+                type="number"
+                dataKey="percentage"
+                interval={0} // 간격을 0으로 설정
+                orientation="top"
+                hide={true}
+                domain={[0, 50]}
+              />
+              <YAxis
+                dataKey="name"
+                type="category"
+                hide={true}
+                label={{
+                  angle: -90,
+                  position: "insideLeft",
+                  width: 100,
+                }}
+                tick={renderYAxisTick} // 모든 눈금 레이블의 폰트 크기를 12px로 설정
+              />
+              <Bar
+                dataKey="percentage"
+                barSize={32}
+                shape={<CustomBarShape />}
+                fill="#8884d8"
+                label={{ position: "right" }}
+              >
+                {data.map((entry, index) => (
+                  <>
+                    <Cell key={`cell-${index}`} fill="F9C8FF" />
+                  </>
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartComponent>
         </div>
       </div>
-      <DetailTop3>
-        {LEGEND_COLORS.map((color, index) => (
-          <DetailTop3BoxContainer key={index}>
-            <DetailTop3Box
-              bgcolor={color}
-              screenheight={window.innerHeight}
-              screenwidth={window.innerWidth}
-            >
-              {data[index].rank}. {category[data[index].name]}
-            </DetailTop3Box>
-            <DetailTop3BoxNumber screenheight={window.innerHeight}>
-              {data[index].category}, {data[index].percentage}%
-            </DetailTop3BoxNumber>
-          </DetailTop3BoxContainer>
-        ))}
-      </DetailTop3>
-      <RemainDNAType>
-        {remainData.map((item, index) => (
-          <RemainDNATypeContainer key={index}>
-            <RemainDNATypeRank>{item.rank}</RemainDNATypeRank>
-            <RemainDNATitle>
-              {category[item.name]} ({categoryReal[item.name]})
-            </RemainDNATitle>
-            <RemainDNATypeRatio>{item.percentage}%</RemainDNATypeRatio>
-          </RemainDNATypeContainer>
-        ))}
-      </RemainDNAType>
     </Container>
   );
 };
@@ -135,11 +245,46 @@ export default Result2;
 const Container = styled.div`
   position: relative;
   min-height: 100%;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #f1faff;
+  &::-webkit-scrollbar {
+    display: none; /* Webkit 브라우저 스크롤바 */
+  }
+`;
+const ChartComponent = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const YLabel = styled.div`
+  margin-left: 40px;
+`;
+
+const YLabelElement = styled.div`
+  font-size: 14px;
+  min-height: 52px;
+  min-width: 140px;
+  display: flex;
+  max-height: 60px;
+  align-items: start;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const YLabelElement1 = styled(YLabelElement)`
+  font-weight: 900;
+`;
+const YLabelElement2 = styled(YLabelElement)`
+  font-weight: 900;
+`;
+const YLabelElement3 = styled(YLabelElement)`
+  font-weight: 900;
+`;
+
+const YLabelSubElement = styled.div`
+  font-size: 12px;
+  font-weight: 400;
 `;
 
 const DetailTop3 = styled.div`
@@ -260,4 +405,9 @@ const Title = styled.div`
   line-height: 24px; /* 100% */
   letter-spacing: -0.48px;
   margin-bottom: 8px;
+`;
+
+const Tip = styled.div`
+  font-size: 8px;
+  margin-bottom: 12px;
 `;

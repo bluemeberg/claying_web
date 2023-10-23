@@ -22,7 +22,7 @@ const VideoBox = (props) => {
       console.log(props.videoDataByChannel);
       for (let i = 0; i < props.videoDataByChannel.length; i++) {
         console.log(props.videoDataByChannel[i]);
-        if (props.videoDataByChannel[i].channelID === channel.channelID) {
+        if (props.videoDataByChannel[i].channel.id === channel.channel.id) {
           result = props.videoDataByChannel[i];
           console.log(result);
           break;
@@ -39,29 +39,31 @@ const VideoBox = (props) => {
   return (
     <div>
       <VideoBoxContainer onClick={() => handleClick(props.likedVideo)}>
+        <VideoCategory>
+          {category[props.likedVideo.video.detail_category]}
+        </VideoCategory>
         <VideoThumbnail>
           <img
-            src={props.likedVideo.videoThumbnail}
-            alt={props.likedVideo.videoID}
+            src={props.likedVideo.video.thumbnail}
+            alt={props.likedVideo.video.id}
           />
         </VideoThumbnail>
-        <VideoCategory>{category[props.likedVideo.dnatype]}</VideoCategory>
         <ChannelBox>
           <ChannelThumbnail>
             <img
-              src={props.likedVideo.channelThumbnail.url}
-              alt={props.likedVideo.channelID}
+              src={props.likedVideo.channel.thumbnail}
+              alt={props.likedVideo.channel.id}
             />
           </ChannelThumbnail>
           <ChannelInfo>
             <VideoTitle>
-              {props.likedVideo.videoTitle.length > 15
-                ? props.likedVideo.videoTitle.slice(0, 13) + "..."
-                : props.likedVideo.videoTitle}
+              {props.likedVideo.video.title.length > 15
+                ? props.likedVideo.video.title.slice(0, 13) + "..."
+                : props.likedVideo.video.title}
             </VideoTitle>
             <ChannelTitle>
-              {props.likedVideo.channelTitle} *{" "}
-              {getTimeAgo(props.likedVideo.uploadDate)}
+              {props.likedVideo.channel.title} *{" "}
+              {getTimeAgo(props.likedVideo.video.upload_date)}
             </ChannelTitle>
           </ChannelInfo>
         </ChannelBox>
@@ -146,14 +148,13 @@ const ChannelTitle = styled.div`
 `;
 
 const VideoCategory = styled.div`
-  color: #fff9f9;
+  color: #3c95ff;
   font-family: Roboto;
   font-size: 14px;
   font-style: normal;
   font-weight: 900;
   line-height: 22px; /* 157.143% */
-  margin-top: -32px;
+  margin-top: -10px;
   display: flex;
-  margin-left: 12px;
   margin-bottom: 4px;
 `;

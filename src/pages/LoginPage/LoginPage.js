@@ -2,6 +2,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { serverInstance } from "../../api/axios";
 import NavBar from "../../components/NavBar";
 
 const LoginPage = () => {
@@ -12,7 +13,11 @@ const LoginPage = () => {
   const handleAuth = async () => {
     const result = await signInWithPopup(auth, provider);
     localStorage.setItem("userData", JSON.stringify(result.user));
-    
+    // user email post
+    const postResult = await serverInstance.post("/users/", {
+      email: result.user.email,
+    });
+    console.log(postResult);
     navigate(`/analysis`, {
       state: {
         photoUrl: result.user.photoURL,

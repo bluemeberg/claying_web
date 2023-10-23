@@ -30,12 +30,18 @@ const UnknownChannelModal = (props) => {
   const handleToggleContent = useCallback(() => {
     setIsExpanded(!isExpanded);
   }, [isExpanded]);
+  props.selectedChannel.videos.sort((a, b) => {
+    const dateA = new Date(a.hot_time);
+    const dateB = new Date(b.hot_time);
+    return dateB - dateA;
+  });
+  console.log(props.selectedChannel);
   return (
     <div className="presentation" role="presentation">
       <div className="wrapper-modal">
         <div className="modal">
           <ModalChannelBanner>
-            <img src={props.selectedChannel.channelBanner} alt="modal-img" />
+            <img src={props.selectedChannel.channel.banner} alt="modal-img" />
             <CancelButton>
               <img
                 src="/images/CancelButton.svg"
@@ -45,35 +51,33 @@ const UnknownChannelModal = (props) => {
             </CancelButton>
           </ModalChannelBanner>
           <ModalChannelThumbnail>
-            {props.selectedChannel.channelThumbnail !== undefined ? (
+            {props.selectedChannel.channel.thumbnail !== undefined ? (
               <img
-                src={props.selectedChannel.channelThumbnail}
+                src={props.selectedChannel.channel.thumbnail}
                 alt="modal-channel-thumbnail"
               />
             ) : (
               <img
-                src={props.selectedChannel.channelThumbnail}
+                src={props.selectedChannel.channel.thumbnail}
                 alt="modal-channel-thumbnail"
               />
             )}
           </ModalChannelThumbnail>
-          <ChannelTitle>{props.selectedChannel.channelTitle}</ChannelTitle>
+          <ChannelTitle>{props.selectedChannel.channel.title}</ChannelTitle>
           <ChannelSubsCount>
-            {formatNumber(props.selectedChannel.channelSubscribeCount)}명
+            {formatNumber(props.selectedChannel.channel.sub_count)}명
           </ChannelSubsCount>
           <ChannelVideoCount>
-            동영상 {props.selectedChannel.videoCount}개 | 조회수{" "}
-            {formatNumber(props.selectedChannel.viewCount)}회
+            동영상 {props.selectedChannel.channel.video_count}개
           </ChannelVideoCount>
-
           <ChannelRecommendButton onClick={handleRecommendClick}>
             관련 채널 더 발견하기
           </ChannelRecommendButton>
           {/* 채널 설명 */}
           <ChannelDescritpion>
             {!isExpanded
-              ? `${props.selectedChannel.description.slice(0, 30)}...`
-              : `${props.selectedChannel.description}`}
+              ? `${props.selectedChannel.channel.description.slice(0, 30)}...`
+              : `${props.selectedChannel.channel.description}`}
           </ChannelDescritpion>
           <ChannelDescriptionMoreButton onClick={handleToggleContent}>
             {isExpanded ? "접기" : "펼치기"}
@@ -82,7 +86,7 @@ const UnknownChannelModal = (props) => {
           <LikedVideoSectionTitle>인기 급상승 영상 이력</LikedVideoSectionTitle>
           {/* map 문을 돌면서 확인 좋아하는 영상들 표출 피룡 */}
           <VideoContainer>
-            {props.selectedChannel.videoList.map((data, index) => (
+            {props.selectedChannel.videos.map((data, index) => (
               <UnknownVideoBox
                 key={index}
                 hotVideo={data}

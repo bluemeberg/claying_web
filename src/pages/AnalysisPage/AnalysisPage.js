@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { serverInstance } from "../../api/axios";
 import NavBar from "../../components/NavBar";
@@ -11,21 +11,45 @@ import category from "../../utils/category_real.json";
 const AnalysisPage = () => {
   const location = useLocation();
   console.log(location);
-  const result = useYoutubeAnalysisData(
-    location.state.token,
-    location.state.email
-  );
+  const navigate = useNavigate();
+  let [token, setToken] = useState("");
+  let [email, setEmail] = useState("");
+  if (location.state !== null) {
+    email = location.state.email;
+    token = location.state.token;
+  }
+
+  useEffect(() => {
+    if (location.state === null) {
+      navigate("/login", {});
+    } else if (location.state.token === "") {
+      navigate("/login", {});
+    } else {
+    }
+  }, [location.state, navigate]);
+
+  const result = useYoutubeAnalysisData(token, email);
   console.log(result);
   let subsCount = result.subsData.length;
   let likedVideoCount = result.longLikedVideoData.length;
+  console.log(token);
+
+  const handleRestart = useCallback(() => {
+    result.handleAnalysisResult(result.longLikedVideoData, result.subsData, 1);
+    result.setTimeoutFlag(false);
+    result.setVideoAnalysisCount(0);
+    result.setProgressValue(0);
+    result.setProgressData([]);
+  }, [result]);
 
   return (
     <Container>
-      <NavBar data={location} />
+      {location.state !== null ? <NavBar data={location} /> : <></>}
       <Title>유튜브 활동 데이터 읽는 중</Title>
       <CountInfo>
-        최근 구독한 채널 0 / {subsCount}개 <br></br>
-        최근 좋아요한 영상 {result.videoAnalysisCount} / {likedVideoCount}개
+        최근 좋아요한 영상 {result.videoAnalysisCount} / {likedVideoCount}개{" "}
+        <br></br>
+        최근 구독한 채널 {subsCount} / {subsCount}개
       </CountInfo>
       <DNAType>{category[result.videoDNA]}</DNAType>
       <SubContainer>
@@ -33,13 +57,29 @@ const AnalysisPage = () => {
           <img src={result.videoThumbnail} alt={result.videoTitle} />
         )}
       </SubContainer>
-      <AnalysisCount>{result.progressValue} %</AnalysisCount>
+      <AnalysisCount>{result.progressValue.toFixed(2)} %</AnalysisCount>
       <ProgressBar value={result.progressValue} max={100} />
-      <Caution>
-        최대 1분 소요. 잠시 기다려주세요!<br></br>(멈출 시 다시 시작을
-        누르세요!)
-      </Caution>
-      <Button>다시 시작하기</Button>
+      {result.progressValue === 100 ? (
+        <Caution>
+          분석 결과를 불러오고 있습니다. <br></br>잠시만 기다려주세요.
+        </Caution>
+      ) : (
+        <Caution>
+          최대 1분 소요. 잠시 기다려주세요!<br></br> <br></br>GPT 기반의 분석
+          지연 시 다시 시작하기 버튼이 활성화됩니다!
+          <br></br> (버튼 클릭 시 이전 분석된 영상은 결과를 불러오고 <br></br>
+          지연된 영상 부터 다시 분석됩니다.)
+        </Caution>
+      )}
+
+      {/* 언노운 채널 불러오는 로딩 바 */}
+      {result.timeoutFlag === true ? (
+        <Button flag="true" onClick={handleRestart}>
+          다시 시작하기
+        </Button>
+      ) : (
+        <Button>다시 시작하기</Button>
+      )}
     </Container>
   );
 };
@@ -61,7 +101,7 @@ const Title = styled.div`
   color: #000;
   text-align: center;
   font-family: Pretendard;
-  font-size: 24px;
+  font-size: 3.4vh;
   font-style: normal;
   font-weight: 600;
   line-height: 24px; /* 100% */
@@ -71,7 +111,7 @@ const Title = styled.div`
 const CountInfo = styled.div`
   color: #000;
   font-family: Pretendard;
-  font-size: 14px;
+  font-size: 2vh;
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 100% */
@@ -81,7 +121,7 @@ const CountInfo = styled.div`
 
 const DNAType = styled.div`
   @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap");
-  width: 232px;
+  width: 80%;
   height: 32px;
   flex-shrink: 0;
   border: 6px solid #3c95ff;
@@ -91,7 +131,7 @@ const DNAType = styled.div`
   justify-content: center;
   align-items: center;
   font-family: Poppins;
-  font-size: 16px;
+  font-size: 2vh;
   font-style: normal;
   font-weight: 700;
   line-height: 12px; /* 100% */
@@ -99,8 +139,8 @@ const DNAType = styled.div`
 `;
 
 const SubContainer = styled.div`
-  width: 240px;
-  height: 135px;
+  width: 90%;
+  height: 55%;
   img {
     width: 100%;
     height: 100%;

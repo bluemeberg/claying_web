@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -49,7 +50,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       console.log(nextSubsPageToken);
       console.log("subs", resultSubs.data);
       // channelID, channelThumbnail
-      
+
       for (let i = 0; i < resultSubs.data.items.length; i++) {
         // channelID, channelThumbnail, channelTitle, channelSubscribers, subsDuration, channelDescription
         let channelID = resultSubs.data.items[i].snippet.resourceId.channelId;
@@ -177,21 +178,16 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
               allVideos = [...allVideos, result.data.items[i]];
               const tags = result.data.items[i].snippet.tags.slice(0, 10);
               let data = {
-                agentId: email,
-                videoID: result.data.items[i].id,
-                videoTitle: result.data.items[i].snippet.title,
-                videoThumbnail:
-                  result.data.items[i].snippet.thumbnails.medium.url,
-                videoDuration: result.data.items[i].contentDetails.duration,
-                uploadDate: result.data.items[i].snippet.publishedAt,
-                categoryID: result.data.items[i].snippet.categoryId,
-                channelID: result.data.items[i].snippet.channelId,
-                channelTitle: result.data.items[i].snippet.channelTitle,
+                id: result.data.items[i].id,
+                title: result.data.items[i].snippet.title,
+                thumbnail: result.data.items[i].snippet.thumbnails.medium.url,
+                duration: result.data.items[i].contentDetails.duration,
+                upload_date: result.data.items[i].snippet.publishedAt,
+                category: parseInt(result.data.items[i].snippet.categoryId, 10),
+                channel_id: result.data.items[i].snippet.channelId,
                 description: result.data.items[i].snippet.description,
-                videoTags: tags,
-                viewCount: result.data.items[i].statistics.viewCount,
-                likeCount: result.data.items[i].statistics.likeCount,
-                commentCount: result.data.items[i].statistics.commentCount,
+                detail_category: "string",
+                tags: tags,
               };
               allDNAData = [...allDNAData, data];
             } else {
@@ -199,21 +195,16 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
               shortVideos = [...shortVideos, result.data.items[i]];
               const tags = result.data.items[i].snippet.tags.slice(0, 10);
               let data = {
-                agentId: email,
-                videoID: result.data.items[i].id,
-                videoTitle: result.data.items[i].snippet.title,
-                videoThumbnail:
-                  result.data.items[i].snippet.thumbnails.medium.url,
-                videoDuration: result.data.items[i].contentDetails.duration,
-                uploadDate: result.data.items[i].snippet.publishedAt,
-                categoryID: result.data.items[i].snippet.categoryId,
-                channelID: result.data.items[i].snippet.channelId,
-                channelTitle: result.data.items[i].snippet.channelTitle,
+                id: result.data.items[i].id,
+                title: result.data.items[i].snippet.title,
+                thumbnail: result.data.items[i].snippet.thumbnails.medium.url,
+                duration: result.data.items[i].contentDetails.duration,
+                upload_date: result.data.items[i].snippet.publishedAt,
+                category: parseInt(result.data.items[i].snippet.categoryId, 10),
+                channel_id: result.data.items[i].snippet.channelId,
                 description: result.data.items[i].snippet.description,
-                videoTags: tags,
-                viewCount: result.data.items[i].statistics.viewCount,
-                likeCount: result.data.items[i].statistics.likeCount,
-                commentCount: result.data.items[i].statistics.commentCount,
+                detail_category: "string",
+                tags: tags,
               };
               allShortDNAData = [...allShortDNAData, data];
             }
@@ -224,7 +215,8 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       let nextPageToken = result.data.nextPageToken;
       console.log(nextPageToken);
       let cnt = 0;
-      if (nextPageToken !== undefined) {
+      console.log("중간점검", allDNAData.length);
+      if (allDNAData.length < 50 && nextPageToken !== undefined) {
         while (true) {
           const result = await youtubeDataAPIInstacne.get("/videos", {
             params: {
@@ -262,43 +254,44 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
                   allVideos = [...allVideos, result.data.items[i]];
                   const tags = result.data.items[i].snippet.tags.slice(0, 10);
                   let data = {
-                    agentId: email,
-                    videoID: result.data.items[i].id,
-                    videoTitle: result.data.items[i].snippet.title,
-                    videoThumbnail:
+                    id: result.data.items[i].id,
+                    title: result.data.items[i].snippet.title,
+                    thumbnail:
                       result.data.items[i].snippet.thumbnails.medium.url,
-                    videoDuration: result.data.items[i].contentDetails.duration,
-                    uploadDate: result.data.items[i].snippet.publishedAt,
-                    categoryID: result.data.items[i].snippet.categoryId,
-                    channelID: result.data.items[i].snippet.channelId,
-                    channelTitle: result.data.items[i].snippet.channelTitle,
+                    duration: result.data.items[i].contentDetails.duration,
+                    upload_date: result.data.items[i].snippet.publishedAt,
+                    category: parseInt(
+                      result.data.items[i].snippet.categoryId,
+                      10
+                    ),
+                    channel_id: result.data.items[i].snippet.channelId,
                     description: result.data.items[i].snippet.description,
-                    videoTags: tags,
-                    viewCount: result.data.items[i].statistics.viewCount,
-                    likeCount: result.data.items[i].statistics.likeCount,
-                    commentCount: result.data.items[i].statistics.commentCount,
+                    detail_category: "string",
+                    tags: tags,
                   };
+                  if (allDNAData.length > 49) {
+                    break;
+                  }
                   allDNAData = [...allDNAData, data];
                 } else {
                   console.log("hi zoo filtering");
                   shortVideos = [...shortVideos, result.data.items[i]];
                   const tags = result.data.items[i].snippet.tags.slice(0, 10);
                   let data = {
-                    agentId: email,
-                    videoID: result.data.items[i].id,
-                    videoTitle: result.data.items[i].snippet.title,
-                    videoThumbnail:
+                    id: result.data.items[i].id,
+                    title: result.data.items[i].snippet.title,
+                    thumbnail:
                       result.data.items[i].snippet.thumbnails.medium.url,
-                    videoDuration: result.data.items[i].contentDetails.duration,
-                    uploadDate: result.data.items[i].snippet.publishedAt,
-                    categoryID: result.data.items[i].snippet.categoryId,
-                    channelID: result.data.items[i].snippet.channelId,
-                    channelTitle: result.data.items[i].snippet.channelTitle,
+                    duration: result.data.items[i].contentDetails.duration,
+                    upload_date: result.data.items[i].snippet.publishedAt,
+                    category: parseInt(
+                      result.data.items[i].snippet.categoryId,
+                      10
+                    ),
+                    channel_id: result.data.items[i].snippet.channelId,
                     description: result.data.items[i].snippet.description,
-                    videoTags: tags,
-                    viewCount: result.data.items[i].statistics.viewCount,
-                    likeCount: result.data.items[i].statistics.likeCount,
-                    commentCount: result.data.items[i].statistics.commentCount,
+                    detail_category: "string",
+                    tags: tags,
                   };
                   allShortDNAData = [...allShortDNAData, data];
                 }
@@ -309,12 +302,11 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
           console.log(result.data.items);
           if (!result.data.nextPageToken) {
             break;
-          } else if (allDNAData.length > 50) {
+          } else if (allDNAData.length > 49) {
             // cnt 3 범위가 200개 영상
             break;
           }
           nextPageToken = result.data.nextPageToken;
-          cnt += 1;
         }
       }
     } catch (e) {
@@ -323,7 +315,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
     setLongLikedVideoData(allDNAData);
     setShortLikedVideoData(allShortDNAData);
     return allDNAData;
-  }, [accessToken, email]);
+  }, [accessToken]);
 
   // 영상 데이터 분석
   const handleLikedVideoProcessBatch = useCallback(
@@ -331,28 +323,61 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       const batches = [];
       const numBatches = Math.ceil(videoData.length / batchSize);
       for (let i = 0; i < numBatches; i++) {
+        console.log(videoData[i]);
         const start = i * batchSize;
         const end = start + batchSize;
         const batch = videoData.slice(start, end);
         // const result = await fetchData(batch);
-        const result = await serverInstance.post("/chatgpt/content/dna", {
-          dnaData: batch,
-        });
-        batches.push(result.data);
-        setVideoAnalysisCount((prevValue) => prevValue + 1);
-        let a = (1 / videoData.length) * 100;
-        setProgressValue((prevValue) => prevValue + a);
-        setProgressData([...progressData, result.data]);
-        setVideoThumbnail(videoData[i].videoThumbnail);
-        setVideoTitle(videoData[i].videoTitle);
-        setVideoDNA(result.data.dna[0].dnatype);
-        console.log(videoData);
+        try {
+          const resultPromise = serverInstance.post("/dna/analysis", batch[0]);
+          // 타임아웃을 위한 프로미스 설정
+          const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+              reject(new Error("요청 시간 초과"));
+            }, 6000); // 1분 타임아웃
+          });
+          // 요청 또는 타임아웃 중 먼저 발생하는 이벤트를 처리
+          const result = await Promise.race([resultPromise, timeoutPromise]);
+          console.log(result);
+          batches.push(result.data);
+          setVideoAnalysisCount((prevValue) => prevValue + 1);
+          let a = (1 / videoData.length) * 100;
+          if (i === numBatches - 1) {
+            setProgressValue(100);
+          } else {
+            setProgressValue((prevValue) => prevValue + a);
+          }
+          setProgressData([...progressData, result.data]);
+          setVideoThumbnail(videoData[i].thumbnail);
+          setVideoTitle(videoData[i].title);
+          setVideoDNA(result.data.video.detail_category);
+          console.log(videoData);
+        } catch (error) {
+          if (error.message === "요청 시간 초과") {
+            setTimeoutFlag(true);
+            break;
+          } else {
+            console.log("요청 오류 : ", error);
+          }
+        }
+        // const result = await serverInstance.post("/chatgpt/content/dna", {
+        //   dnaData: batch,
+        // });
+        // batches.push(result.data);
+        // setVideoAnalysisCount((prevValue) => prevValue + 1);
+        // let a = (1 / videoData.length) * 100;
+        // setProgressValue((prevValue) => prevValue + a);
+        // setProgressData([...progressData, result.data]);
+        // setVideoThumbnail(videoData[i].videoThumbnail);
+        // setVideoTitle(videoData[i].videoTitle);
+        // setVideoDNA(result.data.dna[0].dnatype);
+        // console.log(videoData);
       }
       return batches;
     },
     [progressData]
   );
-
+  const [timeoutFlag, setTimeoutFlag] = useState(false);
   // 채널 데이터 분석
   const handleSubsChannelProcessBatch = useCallback(
     async (channelData, batchSize) => {
@@ -366,6 +391,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         const result = await serverInstance.post("/chatgpt/content/dna", {
           dnaData: batch,
         });
+        console.log(result);
         batches.push(result.data);
         setProgressValue((prevValue) => i);
         setProgressData([...progressData, result.data]);
@@ -390,41 +416,70 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       // 좋아하는 영상 분석 결과에서 튜닝하기
       for (let i = 0; i < videoResult.length; i++) {
         // 분석된 dna 모으기
-        for (let j = 0; j < videoResult[i].dna.length; j++) {
-          dnaTypeCollections = [...dnaTypeCollections, videoResult[i].dna[j]];
-        }
-
-        // 좋아요한 영상 정보에서 채널 정보 뽑아서 모으기
-        for (let j = 0; j < videoResult[i].videoList.length; j++) {
-          userChannelIDs = [
-            ...userChannelIDs,
-            videoResult[i].videoList[j].channelID,
-          ];
-        }
-
+        dnaTypeCollections = [
+          ...dnaTypeCollections,
+          videoResult[i].video.detail_category,
+        ];
+        // // 좋아요한 영상 정보에서 채널 정보 뽑아서 모으기
+        // for (let j = 0; j < videoResult[i].videoList.length; j++) {
+        //   userChannelIDs = [
+        //     ...userChannelIDs,
+        //     videoResult[i].videoList[j].channelID,
+        //   ];
+        // }
         // dnaType 별 누적 카운트 처리하기
-        dnaTypeCollections = dnaTypeCollections.reduce((result, item) => {
-          if (item.dnatype) {
-            const existingItem = result.find((x) => x.dnatype === item.dnatype);
-            if (existingItem) {
-              existingItem.dnacount += item.dnacount;
-            } else {
-              result.push({
-                dnatype: item.dnatype,
-                dnacount: item.dnacount,
-              });
-            }
-          }
-          return result;
-        }, []);
-
-        // dnaType 별 카운트 누적 순으로 정렬하기
-        dnaTypeCollections = dnaTypeCollections.sort(
-          (a, b) => b.dnacount - a.dnacount
-        );
       }
+      for (let i = 0; i < videoResult.length; i++) {
+        userChannelIDs = [...userChannelIDs, videoResult[i].channel.id];
+      }
+      console.log(userChannelIDs);
       console.log(dnaTypeCollections);
-      setDnaTypeCollections(dnaTypeCollections);
+      // 중복된 값을 누적시킬 객체
+      const accumulator = {};
+      // 결과를 담을 배열
+      let resultArray = [];
+      // 배열 순회
+      for (const item of dnaTypeCollections) {
+        if (!accumulator[item]) {
+          // 아직 등록되지 않은 값이면 결과 배열에 추가하고 누적 객체에 등록
+          accumulator[item] = {
+            dna_type: item,
+            count: 1,
+          };
+        } else {
+          // 이미 누적된 값이면 누적 갯수 증가
+          accumulator[item].count++;
+        }
+      }
+      // 객체를 배열로 변환하여 결과 배열에 저장
+      for (const key in accumulator) {
+        if (accumulator.hasOwnProperty(key)) {
+          resultArray.push(accumulator[key]);
+        }
+      }
+      console.log(resultArray);
+      resultArray = resultArray.sort((a, b) => b.count - a.count);
+      // dnaTypeCollections = dnaTypeCollections.reduce((result, item) => {
+      //   console.log(item);
+      //   if (item) {
+      //     const existingItem = result.find((x) => x === item);
+      //     if (existingItem) {
+      //       existingItem.dnacount += item.dnacount;
+      //     } else {
+      //       result.push({
+      //         dnatype: item,
+      //         dnacount: item.dnacount,
+      //       });
+      //     }
+      //   }
+      //   return result;
+      // }, []);
+
+      // // dnaType 별 카운트 누적 순으로 정렬하기
+      // dnaTypeCollections = dnaTypeCollections.sort(
+      //   (a, b) => b.dnacount - a.dnacount
+      // );
+      setDnaTypeCollections(resultArray);
       // const result = await handleYoutubeSubsData();
       console.log(subsChannel);
       // console.log(result);
@@ -433,11 +488,23 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         userChannelIDs = [...userChannelIDs, subsChannel[i]];
       }
       console.log(userChannelIDs);
+      // 중복 제거
       let uniqueUserChannelIDs = new Set(userChannelIDs);
       uniqueUserChannelIDs = Array.from(uniqueUserChannelIDs);
       console.log(uniqueUserChannelIDs);
-      for (let i = 0; i < dnaTypeCollections.length; i++) {
-        dnaTypeNames = [...dnaTypeNames, dnaTypeCollections[i].dnatype];
+      let userInfo = localStorage.getItem("userData");
+      userInfo = JSON.parse(userInfo);
+      console.log(userInfo);
+      const foundResult = await serverInstance.post("/dna/find", {
+        user_dnas: {
+          email: userInfo.email,
+          dnas: resultArray,
+        },
+        subscribe_channel_ids: uniqueUserChannelIDs,
+      });
+      console.log(foundResult.data);
+      for (let i = 0; i < resultArray.length; i++) {
+        dnaTypeNames = [...dnaTypeNames, resultArray[i].value];
       }
       console.log(dnaTypeNames);
       dnaTypeNames = dnaTypeNames.join(",");
@@ -447,7 +514,8 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       return {
         userChannelIDs: uniqueUserChannelIDs,
         dnaTypeNames: dnaTypeNames,
-        dnaTypeCollections: dnaTypeCollections,
+        dnaTypeCollections: resultArray,
+        foundChannel: foundResult.data,
       };
     },
     []
@@ -499,37 +567,64 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
   const handleYoutubeDataSortByChannel = useCallback(
     (videoData, userSubsData, userSubsChannels) => {
       // 채널 ID 별 좋아요한 영상 누적 포맷으로 변경
-      const videoDataByChannel = videoData.reduce((acc, currentValue) => {
-        console.log(acc);
-        console.log(currentValue);
-        const existingItem = acc.find(
-          (item) => item.channelID === currentValue.channelID
-        );
-        console.log(existingItem);
-        // video의 모든 정보가 저장될 수 있도록 수정
-        if (existingItem) {
-          existingItem.videoID.push(currentValue);
+      // 각 채널별로 채널 정보와 영상을 누적시킬 배열
+      // 각 채널별로 채널 정보와 영상을 누적시킬 배열
+      const channelVideosArray = [];
+
+      // 데이터 배열을 순회하면서 채널 정보와 비디오 데이터를 함께 누적
+      videoData.forEach((item) => {
+        const channelData = item.channel;
+        const videoData = item.video;
+
+        // 채널 배열에서 해당 채널을 찾음
+        const existingChannel = channelVideosArray.find((channelItem) => {
+          return channelItem.channel.id === channelData.id;
+        });
+
+        if (existingChannel) {
+          // 이미 존재하는 채널에 영상을 누적
+          existingChannel.videos.push(videoData);
         } else {
-          acc.push({
-            channelID: currentValue.channelID,
-            videoID: [currentValue],
+          // 채널이 존재하지 않으면 새로운 채널 배열 항목을 생성
+          channelVideosArray.push({
+            channel: channelData,
+            videos: [videoData],
           });
         }
-        return acc;
-      }, []);
-      console.log(videoDataByChannel);
-      // 채널 ID 별 구독 여부 확인
-      videoDataByChannel.map((video) => {
+      });
+      // channelVideosArray 배열에 누적된 데이터 확인
+      console.log(channelVideosArray);
+      // const videoDataByChannel = videoData.reduce((acc, currentValue) => {
+      //   console.log(acc);
+      //   console.log(currentValue);
+      //   const existingItem = acc.find(
+      //     (item) => item.channelID === currentValue.channelID
+      //   );
+      //   console.log(existingItem);
+      //   // video의 모든 정보가 저장될 수 있도록 수정
+      //   if (existingItem) {
+      //     existingItem.videoID.push(currentValue);
+      //   } else {
+      //     acc.push({
+      //       channelID: currentValue.channelID,
+      //       videoID: [currentValue],
+      //     });
+      //   }
+      //   return acc;
+      // }, []);
+      // console.log(videoDataByChannel);
+      // // 채널 ID 별 구독 여부 확인
+      channelVideosArray.map((video) => {
         console.log(video);
-        if (userSubsChannels.includes(video.channelID)) {
+        if (userSubsChannels.includes(video.channel.id)) {
           video["subs"] = true;
         } else {
           video["subs"] = false;
         }
         return video;
       });
-      console.log(videoDataByChannel);
-      return videoDataByChannel;
+      console.log(channelVideosArray);
+      return channelVideosArray;
     },
     []
   );
@@ -543,47 +638,66 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         videoData,
         batch
       );
-      for (let i = 0; i < videoData.length; i++) {
-        videoData[i].dnatype = videoAnalysisResult[i].dna[0].dnatype;
+      console.log(videoAnalysisResult);
+      if (videoAnalysisResult.length === videoData.length) {
+        // for (let i = 0; i < videoData.length; i++) {
+        //   videoData[i].dnatype = videoAnalysisResult[i].dna[0].dnatype;
+        // }
+        // console.log(videoAnalysisResult);
+        const { userSubsData, userSubsChannels } =
+          await handleYoutubeSubsData();
+        console.log(userSubsData);
+        userSubsData.sort(
+          (a, b) => new Date(b.subsDate) - new Date(a.subsDate)
+        );
+        console.log(userSubsData);
+
+        // 채널 정보 기반으로 좋아하는 영상 정보 누적시킨 정리 데이터
+        const videoDataByChannel = handleYoutubeDataSortByChannel(
+          videoAnalysisResult,
+          userSubsData,
+          userSubsChannels
+        );
+
+        // 구독 채널 별 상세 카테고리 분석
+        const subsAnalysisResult = await handleSubsChannelProcessBatch(
+          [],
+          batch
+        );
+
+        const {
+          userChannelIDs,
+          dnaTypeNames,
+          dnaTypeCollections,
+          foundChannel,
+        } = await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
+        console.log(userChannelIDs);
+        // const result = await handleGetUnknownChannelList(
+        //   userChannelIDs,
+        //   dnaTypeNames
+        // );
+        console.log(videoAnalysisResult);
+        console.log(subsAnalysisResult);
+        console.log(longLikedVideoData);
+        console.log(videoData);
+        console.log(subsChannels);
+        console.log(dnaTypeCollections);
+        // console.log(result);
+        console.log(videoDataByChannel);
+        navigate(`/complete`, {
+          state: {
+            videoData: videoAnalysisResult,
+            subsData: userSubsData,
+            dnaTypeCollections: dnaTypeCollections,
+            unknownResult: foundChannel,
+            videoDataByChannel: videoDataByChannel,
+          },
+        });
+      } else {
+        // 다시 시작하기 버튼 대기
       }
-      console.log(videoAnalysisResult);
-      const { userSubsData, userSubsChannels } = await handleYoutubeSubsData();
-      console.log(userSubsData);
-      userSubsData.sort((a, b) => new Date(b.subsDate) - new Date(a.subsDate));
-      console.log(userSubsData);
-      const videoDataByChannel = handleYoutubeDataSortByChannel(
-        videoData,
-        userSubsData,
-        userSubsChannels
-      );
-      const subsAnalysisResult = await handleSubsChannelProcessBatch([], batch);
-      const { userChannelIDs, dnaTypeNames, dnaTypeCollections } =
-        await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
-      console.log(userChannelIDs);
-      const result = await handleGetUnknownChannelList(
-        userChannelIDs,
-        dnaTypeNames
-      );
-      console.log(videoAnalysisResult);
-      console.log(subsAnalysisResult);
-      console.log(longLikedVideoData);
-      console.log(videoData);
-      console.log(subsChannels);
-      console.log(dnaTypeCollections);
-      console.log(result);
-      console.log(videoDataByChannel);
-      navigate(`/complete`, {
-        state: {
-          videoData: videoData,
-          subsData: userSubsData,
-          dnaTypeCollections: dnaTypeCollections,
-          unknownResult: result,
-          videoDataByChannel: videoDataByChannel,
-        },
-      });
     },
     [
-      handleGetUnknownChannelList,
       handleLikedVideoProcessBatch,
       handleResultTuning,
       handleSubsChannelProcessBatch,
@@ -599,13 +713,18 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
   useEffect(() => {
     // handleYoutubeSubsData();
     // handleYoutubeLikedVideo();
-    handleAnalysisResult(longLikedVideoData, subsData, 1);
+    console.log(accessToken);
+    if (accessToken === "") {
+      console.log("goback");
+    } else {
+      handleAnalysisResult(longLikedVideoData, subsData, 1);
+    }
     // handleLikedVideoProcessBatch(longLikedVideoData, 1);
     console.log(longLikedVideoData);
     console.log(subsChannels);
     console.log(dnaTypeCollections);
   }, []);
-
+  console.log(timeoutFlag);
   return {
     subsData,
     longLikedVideoData,
@@ -620,5 +739,11 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
     progressValue,
     dnaTypeCollections,
     totalAnalysistResult,
+    timeoutFlag,
+    handleAnalysisResult,
+    setTimeoutFlag,
+    setVideoAnalysisCount,
+    setProgressValue,
+    setProgressData,
   };
 };

@@ -3,91 +3,121 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import FindChannelCategory from "./FindChannelCategory";
 
 const FindPage = () => {
   const location = useLocation();
   console.log(location.state);
 
-  console.log(location.state.unknownResult.unknown);
+  console.log(location.state.unknownResult.found_dnas);
 
+  // 데이터 배열을 순회하면서 채널 ID를 기준으로 비디오 데이터를 모읍니다.
+  const resultUnknownResult = [];
+  location.state.unknownResult.found_dnas.forEach((item) => {
+    console.log(item.found_videos);
+    const result = [];
+    item.found_videos.forEach((item) => {
+      const channel = item.channel;
+      const video = item.video;
+      // 결과 배열에서 채널 정보가 같은 항목 찾기
+      if (channel.region === "KR") {
+        const existingChannel = result.find(
+          (entry) => entry.channel.id === channel.id
+        );
+        // 찾은 경우 비디오를 해당 채널의 videos 배열에 추가, 없으면 새로운 채널 생성
+        if (existingChannel) {
+          existingChannel.videos.push(video);
+        } else {
+          result.push({ channel, videos: [video] });
+        }
+      }
+    });
+    console.log(result);
+    resultUnknownResult.push({ dna_type: item.dna_type, found_videos: result });
+  });
+  console.log(resultUnknownResult);
+
+  // const foundVideoChannelByData =
+  //   location.state.unknownResult.found_dnas.reduce((acc, item, index) => {
+  //     const dna_type = item.dna_type;
+  //     item.found_videos.forEach((videoInfo) => {
+  //       const channelData = videoInfo.channel;
+  //       const videoData = videoInfo.video;
+  //       // 이미 같은 채널 ID로 묶인 경우 해당 배열에 추가, 아니면 새로운 배열 생성
+  //       const existingIndex = acc.findIndex(
+  //         (entry) => entry.id === channelData.id
+  //       );
+  //       if (existingIndex !== -1) {
+  //         acc[existingIndex].videos.push(videoData);
+  //       } else {
+  //         acc.push({ dna_type, channel: channelData, videos: [videoData] });
+  //       }
+  //     });
+  //     return acc;
+  //   }, []);
+  // console.log(foundVideoChannelByData);
   // 영상 카테고리 비중
-  for (let i = 0; i < location.state.unknownResult.unknown.length; i++) {
-    if (location.state.unknownResult.unknown[i].channelList !== null) {
-      location.state.unknownResult.unknown[i].channelList.forEach((item) => {
+  for (let i = 0; i < resultUnknownResult.length; i++) {
+    if (resultUnknownResult[i].found_videos !== null) {
+      resultUnknownResult[i].found_videos.forEach((item) => {
         let count = 0;
-        item.videoList.forEach((video) => {
-          if (video.detailCategory === "News & Politics") {
-            video.detailCategory = "News/Politics";
-          } else if (
-            video.detailCategory === "Sports Highlights" ||
-            video.detailCategory === "Sports Event Reviews" ||
-            video.detailCategory === "Sports Interviews and Inside Stories" ||
-            video.detailCategory === "Sports News and Analysis"
-          ) {
-            video.detailCategory = "Sports";
-          }
-          if (
-            video.detailCategory ===
-            location.state.unknownResult.unknown[i].detailCategory
-          ) {
+        console.log(item);
+        item.videos.forEach((video) => {
+          if (video.detail_category === resultUnknownResult[i].dna_type) {
             count++;
           }
-          const totalItems = item.videoList.length;
-          const percentage = (count / totalItems) * 100;
-          item["detailCategoryRate"] = percentage;
-          item["detailCategoryCount"] = totalItems;
-          if (totalItems >= 2 && percentage === 100) {
-            item["findPriority"] = 1;
-          } else if (totalItems >= 2 && percentage > 50 && percentage < 100) {
-            item["findPriority"] = 2;
-          } else if (totalItems === 1) {
-            item["findPriority"] = 3;
-          } else if (totalItems >= 2 && percentage <= 50) {
-            item["findPriority"] = 4;
-          } else {
-            item["findPriority"] = null;
-          }
         });
-      });
-    }
-  }
-  console.log(location.state.unknownResult.unknown);
-  // 데이터를 분류
-  for (let i = 0; i < location.state.unknownResult.unknown.length; i++) {
-    if (location.state.unknownResult.unknown[i].channelList !== null) {
-      location.state.unknownResult.unknown[i]["a"] = [];
-      location.state.unknownResult.unknown[i]["b"] = [];
-      location.state.unknownResult.unknown[i]["c"] = [];
-      location.state.unknownResult.unknown[i]["d"] = [];
-      location.state.unknownResult.unknown[i].channelList.forEach((item) => {
-        if (
-          item.channelSubscribeCount >= 10000 &&
-          item.channelSubscribeCount < 50000
-        ) {
-          location.state.unknownResult.unknown[i]["a"].push(item);
-        } else if (
-          item.channelSubscribeCount >= 50000 &&
-          item.channelSubscribeCount < 100000
-        ) {
-          location.state.unknownResult.unknown[i]["b"].push(item);
-        } else if (
-          item.channelSubscribeCount >= 100000 &&
-          item.channelSubscribeCount <= 500000
-        ) {
-          location.state.unknownResult.unknown[i]["c"].push(item);
+        const totalItems = item.videos.length;
+        const percentage = (count / totalItems) * 100;
+        item["detailCategoryRate"] = percentage;
+        item["detailCategoryCount"] = totalItems;
+        if (totalItems >= 2 && percentage === 100) {
+          item["findPriority"] = 1;
+        } else if (totalItems >= 2 && percentage > 50 && percentage < 100) {
+          item["findPriority"] = 2;
+        } else if (totalItems === 1) {
+          item["findPriority"] = 3;
+        } else if (totalItems >= 2 && percentage <= 50) {
+          item["findPriority"] = 4;
         } else {
-          location.state.unknownResult.unknown[i]["d"].push(item);
+          item["findPriority"] = null;
         }
       });
     }
   }
-  console.log(location.state.unknownResult.unknown);
+  console.log(resultUnknownResult);
+  // 데이터를 분류
+  for (let i = 0; i < resultUnknownResult.length; i++) {
+    if (resultUnknownResult[i].found_videos !== null) {
+      resultUnknownResult[i]["a"] = [];
+      resultUnknownResult[i]["b"] = [];
+      resultUnknownResult[i]["c"] = [];
+      resultUnknownResult[i]["d"] = [];
+      resultUnknownResult[i].found_videos.forEach((item) => {
+        if (item.channel.sub_count >= 10000 && item.channel.sub_count < 50000) {
+          resultUnknownResult[i]["a"].push(item);
+        } else if (
+          item.channel.sub_count >= 50000 &&
+          item.channel.sub_count < 100000
+        ) {
+          resultUnknownResult[i]["b"].push(item);
+        } else if (
+          item.channel.sub_count >= 100000 &&
+          item.channel.sub_count <= 500000
+        ) {
+          resultUnknownResult[i]["c"].push(item);
+        } else {
+          resultUnknownResult[i]["d"].push(item);
+        }
+      });
+    }
+  }
+  console.log(resultUnknownResult);
   const customSortVideo = useCallback((a, b) => {
     // hotTime을 날짜로 변환하여 비교
-    const dateA = new Date(a.hotTime);
-    const dateB = new Date(b.hotTime);
+    const dateA = new Date(a.hot_time);
+    const dateB = new Date(b.hot_time);
 
     // 날짜를 비교하여 최신순으로 정렬
     return dateB - dateA;
@@ -97,10 +127,10 @@ const FindPage = () => {
       if (a.findPriority === b.findPriority) {
         if (a.detailCategoryRate === b.detailCategoryRate) {
           if (b.detailCategoryCount === a.detailCategoryCount) {
-            b.videoList.sort(customSortVideo);
-            a.videoList.sort(customSortVideo);
-            const hotTimeA = new Date(a.videoList[0].hotTime);
-            const hotTimeB = new Date(b.videoList[0].hotTime);
+            b.videos.sort(customSortVideo);
+            a.videos.sort(customSortVideo);
+            const hotTimeA = new Date(a.videos[0].hot_time);
+            const hotTimeB = new Date(b.videos[0].hot_time);
             return hotTimeB - hotTimeA;
           }
           return b.detailCategoryCount - a.detailCategoryCount;
@@ -115,23 +145,23 @@ const FindPage = () => {
     [customSortVideo]
   );
 
-  for (let i = 0; i < location.state.unknownResult.unknown.length; i++) {
-    if (location.state.unknownResult.unknown[i].channelList !== null) {
-      if (location.state.unknownResult.unknown[i]["a"].length !== 0) {
-        location.state.unknownResult.unknown[i]["a"].sort(customSort);
+  for (let i = 0; i < resultUnknownResult.length; i++) {
+    if (resultUnknownResult[i].channelList !== null) {
+      if (resultUnknownResult[i]["a"].length !== 0) {
+        resultUnknownResult[i]["a"].sort(customSort);
       }
-      if (location.state.unknownResult.unknown[i]["b"].length !== 0) {
-        location.state.unknownResult.unknown[i]["b"].sort(customSort);
+      if (resultUnknownResult[i]["b"].length !== 0) {
+        resultUnknownResult[i]["b"].sort(customSort);
       }
-      if (location.state.unknownResult.unknown[i]["c"].length !== 0) {
-        location.state.unknownResult.unknown[i]["c"].sort(customSort);
+      if (resultUnknownResult[i]["c"].length !== 0) {
+        resultUnknownResult[i]["c"].sort(customSort);
       }
-      if (location.state.unknownResult.unknown[i]["d"].length !== 0) {
-        location.state.unknownResult.unknown[i]["d"].sort(customSort);
+      if (resultUnknownResult[i]["d"].length !== 0) {
+        resultUnknownResult[i]["d"].sort(customSort);
       }
     }
   }
-  console.log(location.state.unknownResult.unknown);
+  console.log(resultUnknownResult);
 
   // 2. 유저 성향에 해당하는 영상이 많은 채널에 발견 우선순위 부여
   // 3. 또는 채널 별 전체 인기 영상 중 해당 카테고리 영상의 비중이 높은 순으로 채널 정렬
@@ -142,8 +172,22 @@ const FindPage = () => {
   return (
     <Container>
       <NavBar back={true} />
-      <Swiper pagination={true} modules={[Pagination]} className="mySwiper">
-        {location.state.unknownResult.unknown.slice(0, 4).map((data, index) => (
+      <div className="prev">
+        <img src="/images/LeftArrow.svg" alt="leftArrow" />
+      </div>
+      <div className="next">
+        <img src="/images/RightArrow.svg" alt="rightArrow" />
+      </div>
+      <Swiper
+        pagination={true}
+        navigation={{
+          nextEl: ".next",
+          prevEl: ".prev",
+        }}
+        modules={[Pagination, Navigation]}
+        className="mySwiper"
+      >
+        {resultUnknownResult.slice(0, 4).map((data, index) => (
           <SwiperSlide>
             <FindChannelCategory unknown={data} key={index} />
           </SwiperSlide>

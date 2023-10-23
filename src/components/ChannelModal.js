@@ -29,12 +29,35 @@ const ChannelModal = (props) => {
     props.setResultModalOpen(true);
   }, [props]);
 
+  const tempImages = {
+    "Business/Entrepreneurship": "/images/character/temp/business.svg",
+    Sports: "/images/character/temp/soccer.svg",
+    "SelfImprovement/Motivation": "/images/character/temp/selfimporvement.svg",
+    "IT/Tech": "/images/character/temp/ittech.svg",
+    "Makeup/Beauty": "/images/character/temp/makeupbeauty.svg",
+    Car: "/images/character/temp/car.svg",
+    Comedy: "/images/character/temp/comedy.svg",
+    Gameplay: "/images/character/temp/gameplay.svg",
+    Finance: "/images/character/temp/finance.svg",
+    "News/Politics": "/images/character/temp/news.svg",
+    "Travel Vlogs": "/images/character/temp/travel.svg",
+    "Shows&Talk Shows": "/images/character/temp/show.svg",
+    "Documentary Movies": "/images/character/temp/movie.svg",
+    "Fashion/Style": "/images/character/temp/fashion.svg",
+    "Sci-Fi/Fantasy Movies": "/images/character/temp/movie.svg",
+    // 다른 특성과 이미지 경로도 추가
+  };
+
   return (
     <div className="presentation" role="presentation">
       <div className="wrapper-modal">
         <div className="modal">
           <ModalChannelBanner>
-            <img src={props.selectedChannel.channelBanner} alt="modal-img" />
+            {props.selectedChannel.banner !== undefined ? (
+              <img src={props.selectedChannel.banner} alt="modal-img" />
+            ) : (
+              <img src={props.selectedChannel.channel.banner} alt="modal-img" />
+            )}
             <CancelButton>
               <img
                 src="/images/CancelButton.svg"
@@ -44,19 +67,23 @@ const ChannelModal = (props) => {
             </CancelButton>
           </ModalChannelBanner>
           <ModalChannelThumbnail>
-            {props.selectedChannel.channelThumbnail.url !== undefined ? (
-              <img
-                src={props.selectedChannel.channelThumbnail.url}
-                alt="modal-channel-thumbnail"
-              />
-            ) : (
+            {props.selectedChannel.channelThumbnail !== undefined ? (
               <img
                 src={props.selectedChannel.channelThumbnail}
                 alt="modal-channel-thumbnail"
               />
+            ) : (
+              <img
+                src={props.selectedChannel.channel.thumbnail}
+                alt="modal-channel-thumbnail"
+              />
             )}
           </ModalChannelThumbnail>
-          <ChannelTitle>{props.selectedChannel.channelTitle}</ChannelTitle>
+          {props.selectedChannel.channelTitle !== undefined ? (
+            <ChannelTitle>{props.selectedChannel.channelTitle}</ChannelTitle>
+          ) : (
+            <ChannelTitle>{props.selectedChannel.channel.title}</ChannelTitle>
+          )}
           <ChannelSubsCount>
             {props.selectedVideoDataByChannel === null ||
             props.selectedVideoDataByChannel.subs === true ? (
@@ -64,11 +91,19 @@ const ChannelModal = (props) => {
             ) : (
               <p>미구독 </p>
             )}
-            {formatNumber(props.selectedChannel.subsCount)}명
+            {props.selectedChannel.subsCount !== undefined
+              ? formatNumber(props.selectedChannel.subsCount)
+              : formatNumber(props.selectedChannel.channel.sub_count)}
+            명
           </ChannelSubsCount>
           <ChannelVideoCount>
-            동영상 {props.selectedChannel.videoCount}개 | 조회수{" "}
-            {formatNumber(props.selectedChannel.viewCount)}회
+            동영상{" "}
+            {props.selectedChannel.videoCount !== undefined
+              ? props.selectedChannel.videoCount
+              : props.selectedChannel.channel.video_count}
+            개
+            {/* | 조회수{" "}
+            {formatNumber(props.selectedChannel.viewCount)}회 */}
           </ChannelVideoCount>
           <StarRating />
           <ChannelRecommendInputBox
@@ -86,13 +121,13 @@ const ChannelModal = (props) => {
           {/* map 문을 돌면서 확인 좋아하는 영상들 표출 피룡 */}
           {props.selectedVideoDataByChannel === null ? (
             <LikeVideoGuide>
-              <img src="/images/TestBanner.svg" alt="banner" />
+              <img src={tempImages[props.topDNAType]} alt="banner" />
               아직 좋아요한 영상이 없습니다! <br></br>구독 중인 크리에이터의
               영상에 좋아요를 눌러주세요!
             </LikeVideoGuide>
           ) : (
             <VideoContainer>
-              {props.selectedVideoDataByChannel.videoID.map((data, index) => (
+              {props.selectedVideoDataByChannel.videos.map((data, index) => (
                 <VideoBoxNonModal
                   key={index}
                   likedVideo={data}

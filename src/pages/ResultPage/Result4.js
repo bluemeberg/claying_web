@@ -32,7 +32,7 @@ const Result4 = (props) => {
     // 미구독 채널들 분류
     // videoID 배열의 길이가 같은 요소들을 그룹화
     const groupedFalseSubs = falseSubs.reduce((groups, item) => {
-      const key = item.videoID.length.toString(); // videoID 갯수를 그룹화 키로 사용
+      const key = item.videos.length.toString(); // videoID 갯수를 그룹화 키로 사용
       groups[key] = groups[key] || []; // 그룹이 없으면 생성
       groups[key].push(item);
       return groups;
@@ -45,8 +45,8 @@ const Result4 = (props) => {
         groupedFalseSubs[key].sort(compareByUploadDate);
         groupedFalseSubs[key].sort((a, b) => {
           // 가장 최신 video의 uploadDate를 비교
-          const latestDateA = new Date(a.videoID[0].uploadDate);
-          const latestDateB = new Date(b.videoID[0].uploadDate);
+          const latestDateA = new Date(a.videos[0].upload_date);
+          const latestDateB = new Date(b.videos[0].upload_date);
           return latestDateB - latestDateA; // 내림차순 정렬
         });
       }
@@ -55,35 +55,37 @@ const Result4 = (props) => {
     const sortedFalseData = Object.values(groupedFalseSubs).flat();
     console.log(sortedFalseData);
     // 배열을 videoID 갯수가 많은 순으로 정렬
-    sortedFalseData.sort((a, b) => b.videoID.length - a.videoID.length);
+    sortedFalseData.sort((a, b) => b.videos.length - a.videos.length);
     // 결과 확인
     console.log(sortedFalseData);
-    //  정렬된 채널 정보 추가
-    const mergedTop3FalseData = sortedFalseData.reduce((acc, curr) => {
-      console.log(curr);
-      // videoID 키 이름을 videoIDs로 변경
-      const newObj = {
-        ...curr, // 기존 객체를 복사
-        videoIDs: curr.videoID, // videoID를 videoIDs로 복사
-      };
-      console.log(newObj);
-      const subsDataItem = props.likedVideos.find(
-        (item) => item.channelID === newObj.channelID
-      );
-      console.log(subsDataItem);
-      if (subsDataItem) {
-        acc.push({ ...newObj, ...subsDataItem });
-        console.log(acc);
-      }
-      return acc;
-    }, []);
-    console.log(mergedTop3FalseData);
-    setNonSubsData(mergedTop3FalseData);
+
+    // 구독
+    // //  정렬된 채널 정보 추가
+    // const mergedTop3FalseData = sortedFalseData.reduce((acc, curr) => {
+    //   console.log(curr);
+    //   // videoID 키 이름을 videoIDs로 변경
+    //   const newObj = {
+    //     ...curr, // 기존 객체를 복사
+    //     videoIDs: curr.videoID, // videoID를 videoIDs로 복사
+    //   };
+    //   console.log(newObj);
+    //   const subsDataItem = props.likedVideos.find(
+    //     (item) => item.channelID === newObj.channelID
+    //   );
+    //   console.log(subsDataItem);
+    //   if (subsDataItem) {
+    //     acc.push({ ...newObj, ...subsDataItem });
+    //     console.log(acc);
+    //   }
+    //   return acc;
+    // }, []);
+    // console.log(mergedTop3FalseData);
+    setNonSubsData(sortedFalseData);
 
     //  구독 채널 분류
     // videoID 배열의 길이가 같은 요소들을 그룹화
     const groupedTrueSubs = trueSubs.reduce((groups, item) => {
-      const key = item.videoID.length.toString(); // videoID 갯수를 그룹화 키로 사용
+      const key = item.videos.length.toString(); // videoID 갯수를 그룹화 키로 사용
       groups[key] = groups[key] || []; // 그룹이 없으면 생성
       groups[key].push(item);
       return groups;
@@ -95,8 +97,8 @@ const Result4 = (props) => {
         groupedTrueSubs[key].sort(compareByUploadDate);
         groupedTrueSubs[key].sort((a, b) => {
           // 가장 최신 video의 uploadDate를 비교
-          const latestDateA = new Date(a.videoID[0].uploadDate);
-          const latestDateB = new Date(b.videoID[0].uploadDate);
+          const latestDateA = new Date(a.videos[0].upload_date);
+          const latestDateB = new Date(b.videos[0].upload_date);
           return latestDateB - latestDateA; // 내림차순 정렬
         });
       }
@@ -105,57 +107,40 @@ const Result4 = (props) => {
     const sortedTrueData = Object.values(groupedTrueSubs).flat();
     console.log(sortedTrueData);
     // 배열을 videoID 갯수가 많은 순으로 정렬
-    sortedTrueData.sort((a, b) => b.videoID.length - a.videoID.length);
+    sortedTrueData.sort((a, b) => b.videos.length - a.videos.length);
     // 결과 확인
     console.log(sortedTrueData);
-    const mergedTop3TrueData = sortedTrueData.reduce((acc, curr) => {
-      console.log(curr);
-      const subsDataItem = props.subsData.find(
-        (item) => item.channelID === curr.channelID
+    // 231023 to do
+    // 여기서 props.subsData 배열에서 sortedTrueData 상위 3개의 구독 데이터에 맞는 채널들을 타겟에서 subsData를 가져온다.
+    sortedTrueData.forEach((channel) => {
+      const matchedSubsData = props.subsData.find(
+        (subsData) => subsData.channelID === channel.channel.id
       );
-      console.log(subsDataItem);
-      if (subsDataItem) {
-        acc.push({ ...curr, ...subsDataItem });
-        console.log(acc);
+      if (matchedSubsData) {
+        channel.channel["subsDate"] = matchedSubsData.subsDate;
       }
-      return acc;
-    }, []);
-    console.log(mergedTop3TrueData);
-    setSubsData(mergedTop3TrueData);
-  }, [props.likedVideos, props.subsData, props.videoDataByChannel]);
+    });
+    console.log(sortedTrueData);
+    // const mergedTop3TrueData = sortedTrueData.reduce((acc, curr) => {
+    //   console.log(curr);
+    //   const subsDataItem = props.subsData.find(
+    //     (item) => item.channelID === curr.channelID
+    //   );
+    //   console.log(subsDataItem);
+    //   if (subsDataItem) {
+    //     acc.push({ ...curr, ...subsDataItem });
+    //     console.log(acc);
+    //   }
+    //   return acc;
+    // }, []);
+    // console.log(mergedTop3TrueData);
+    setSubsData(sortedTrueData);
+  }, [props.videoDataByChannel]);
 
-  // 6개 구독채널에 대한 채널 정보 받아오기
-  const handleGetSubsChannelInfo = useCallback(async () => {
-    if (subsData !== undefined) {
-      for (let i = 0; i < subsData.slice(0, 3).length; i++) {
-        const response = await youtubeDataAPIInstacne.get("/channels", {
-          params: {
-            id: subsData[i].channelID,
-            part: "snippet, brandingSettings,statistics",
-            key: youtubeGeneralAPI,
-          },
-        });
-        console.log(response.data);
-        if (response.data.items[0].brandingSettings.image !== undefined) {
-          const channelBanner =
-            response.data.items[0].brandingSettings.image.bannerExternalUrl;
-          subsData[i]["channelBanner"] = channelBanner;
-        }
-        subsData[i]["subsCount"] =
-          response.data.items[0].statistics.subscriberCount;
-        subsData[i]["videoCount"] =
-          response.data.items[0].statistics.videoCount;
-        subsData[i]["viewCount"] = response.data.items[0].statistics.viewCount;
-      }
-    }
-  }, [subsData]);
   useEffect(() => {
     handleVideoChannelDataSort();
   }, []);
 
-  useEffect(() => {
-    handleGetSubsChannelInfo();
-  }, [subsData]);
   console.log(subsData);
   console.log(nonSubsData);
   return (
@@ -175,6 +160,7 @@ const Result4 = (props) => {
                 subsData={data}
                 setModalOpen={props.setModalOpen}
                 videoDataByChannel={props.videoDataByChannel}
+                topDNAType={props.topDNAType}
                 subsDuring="true"
               />
             ))}
@@ -187,6 +173,7 @@ const Result4 = (props) => {
                 subsData={data}
                 setModalOpen={props.setModalOpen}
                 videoDataByChannel={props.videoDataByChannel}
+                topDNAType={props.topDNAType}
               />
             ))}
       </SubsContainer>

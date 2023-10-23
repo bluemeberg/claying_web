@@ -16,6 +16,20 @@ const MainPage = () => {
     "/images/character/traveller.svg",
   ];
 
+  const tempImages = [
+    "/images/character/temp/movie.svg",
+    "/images/character/temp/ittech.svg",
+    "/images/character/temp/pet.svg",
+    "/images/character/temp/selfimporvement.svg",
+    "/images/character/temp/show.svg",
+    "/images/character/temp/soccer.svg",
+    "/images/character/temp/business.svg",
+    "/images/character/temp/car.svg",
+    "/images/character/temp/comedy.svg",
+    "/images/character/temp/game.svg",
+    "/images/character/temp/makeupbeauty.svg",
+  ];
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [fadeIn, setFadein] = useState(true);
 
@@ -41,6 +55,7 @@ const MainPage = () => {
       if (user) {
         if (pathname === "/") {
           console.log(user);
+          console.log(auth);
           navigate("/analysis", {
             state: {
               photoUrl: user.photoURL,
@@ -112,7 +127,7 @@ const MainPage = () => {
         </Title>
         <Banner>
           <img
-            src={images[currentImageIndex]}
+            src={tempImages[currentImageIndex]}
             alt={`Image${currentImageIndex}`}
           />
         </Banner>
@@ -146,8 +161,8 @@ const MainPage = () => {
       </OverViewSection>
       <OverViewSection2>
         <OverViewSubTitle>
-          저희는 더 좋은, 더 많은 크리에이터를<br></br> 더 빠르게 발견하기
-          위해서 <br></br>
+          How claying? 저희는 더 좋은, 더 많은 크리에이터를<br></br> 더 빠르게
+          발견하기 위해서 <br></br>
           <br></br>
           <span>주변 친구들, 콘텐츠 성향이 유사한 유저</span>들 간의<br></br>{" "}
           <span>유튜브 좋아요, 구독 정보</span>를 기반으로<br></br>{" "}
@@ -174,7 +189,7 @@ const MainPage = () => {
       </OverViewSection3>
       <OverViewSection4>
         <OverViewSection4Title>
-          분석 결과를 통해 무엇을 할 수 있나요?
+          What claying? 분석 결과를 통해 무엇을 할 수 있나요?
         </OverViewSection4Title>
         <OverviewSection4Symbol>1</OverviewSection4Symbol>
         <OverViewSection4Title sub="sub">
@@ -221,12 +236,14 @@ const MainPage = () => {
         </OverViewSection4Img>
       </OverViewSection4>
       <OverViewSection5>
-        더 많은 크리에이터 발견을 위한 <br></br>
-        Creative Playing, 클레잉의 시작 <br></br>
-        <br></br>
-        유튜브 공간을 연결 시키기 위한<br></br>
-        콘텐츠 성향 분석 테스트 <br></br>
-        지금 바로 시작하세요.
+        <OverViewSection5Title>
+          더 많은 크리에이터 발견을 위한 <br></br>
+          Creative Playing, 클레잉의 시작 <br></br>
+          <br></br>
+          유튜브 공간을 연결 시키기 위한<br></br>
+          콘텐츠 성향 분석 테스트 <br></br>
+          지금 바로 시작하세요.
+        </OverViewSection5Title>
       </OverViewSection5>
     </>
   );
@@ -255,16 +272,17 @@ const Container = styled.main`
   }
 `;
 
-const Title = styled.div`
+const Title = styled.h1`
   color: #000;
   text-align: center;
   font-family: Pretendard;
   font-size: 36px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 900;
   line-height: 48px; /* 133.333% */
   letter-spacing: -0.72px;
   margin-top: 112px;
+  margin-bottom: 0px;
 `;
 
 const Banner = styled.div`
@@ -278,7 +296,7 @@ const SubTitle = styled.div`
   color: #000;
   text-align: center;
   font-family: Pretendard;
-  font-size: 2vh;
+  font-size: 2.2vh;
   font-style: normal;
   font-weight: 700;
   line-height: 20px; /* 142.857% */
@@ -514,6 +532,14 @@ const OverViewSection4Img = styled.div`
 
 const OverViewSection5 = styled.div`
   display: flex;
+  margin-left: 32px;
+  margin-top: 60px;
+  margin-bottom: 160px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const OverViewSection5Title = styled.div`
   color: #000;
   font-family: Roboto;
   font-size: 16px;
@@ -521,8 +547,5 @@ const OverViewSection5 = styled.div`
   font-weight: 400;
   line-height: 24px; /* 100% */
   letter-spacing: -0.32px;
-  display: flex;
-  margin-left: 32px;
-  margin-top: 60px;
-  margin-bottom: 160px;
+  min-width: 310px;
 `;

@@ -29,43 +29,43 @@ const NewChannelBox = (props) => {
     props.props["viewCount"] = response.data.items[0].statistics.viewCount;
     props.props["description"] = response.data.items[0].snippet.description;
   }, [props.props]);
-  useEffect(() => {
-    handleGetChannelInfo();
-  }, []);
+  // useEffect(() => {
+  //   handleGetChannelInfo();
+  // }, []);
   console.log(props.props);
 
   return (
     <>
       <NewChannelContainer subs={props.props.channelSubscribeCount}>
         <NewChannelSubsNumber>
-          {props.props.channelSubscribeCount >= 10000 &&
-          props.props.channelSubscribeCount < 50000
+          {props.props.channel.sub_count >= 10000 &&
+          props.props.channel.sub_count < 50000
             ? "+1만"
-            : props.props.channelSubscribeCount >= 50000 &&
-              props.props.channelSubscribeCount < 100000
+            : props.props.channel.sub_count >= 50000 &&
+              props.props.channel.sub_count < 100000
             ? "+5만"
-            : props.props.channelSubscribeCount >= 100000 &&
-              props.props.channelSubscribeCount < 500000
+            : props.props.channel.sub_count >= 100000 &&
+              props.props.channel.sub_count < 500000
             ? "+10만"
             : "+50만"}
         </NewChannelSubsNumber>
-        <NewChannelThumbanil filter={props.props.channelSubscribeCount}>
+        <NewChannelThumbanil filter={props.props.channel.sub_count}>
           <img
-            src={props.props.channelThumbnail}
-            alt={props.props.channelTitle}
+            src={props.props.channel.thumbnail}
+            alt={props.props.channel.title}
           />
         </NewChannelThumbanil>
-        {props.props.channelSubscribeCount >= 500000 ? (
+        {props.props.channel.sub_count >= 500000 ? (
           <NewChannelBlur></NewChannelBlur>
         ) : (
           <></>
         )}
-        {props.props.channelSubscribeCount >= 500000 ? (
+        {props.props.channel.sub_count >= 500000 ? (
           <NewChannelTitle>???</NewChannelTitle>
         ) : (
-          <NewChannelTitle>{props.props.channelTitle}</NewChannelTitle>
+          <NewChannelTitle>{props.props.channel.title}</NewChannelTitle>
         )}
-        {props.props.channelSubscribeCount >= 500000 ? (
+        {props.props.channel.sub_count >= 500000 ? (
           <DetailButton subs="false"></DetailButton>
         ) : (
           <DetailButton onClick={() => handleClick(props.props)}>

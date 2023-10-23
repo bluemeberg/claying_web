@@ -13,26 +13,30 @@ const SubsChannelBox = (props) => {
   const [selectedVideoDataByChannel, setSelectedVideoDataByChannel] =
     useState();
   const [resultModalOpen, setResultModalOpen] = useState(false);
-  const handleClick = useCallback(
-    (channel) => {
-      setModalOpen(true);
-      console.log(channel);
-      let result = null;
-      console.log(props.videoDataByChannel);
-      for (let i = 0; i < props.videoDataByChannel.length; i++) {
-        console.log(props.videoDataByChannel[i]);
-        if (props.videoDataByChannel[i].channelID === channel.channelID) {
+  const handleClick = useCallback((channel) => {
+    console.log(channel);
+    let result = null;
+    console.log(props.videoDataByChannel);
+    for (let i = 0; i < props.videoDataByChannel.length; i++) {
+      if (channel.channel !== undefined) {
+        if (props.videoDataByChannel[i].channel.id === channel.channel.id) {
+          result = props.videoDataByChannel[i];
+          console.log(result);
+          break;
+        }
+      } else {
+        if (props.videoDataByChannel[i].channel.id === channel.channelID) {
           result = props.videoDataByChannel[i];
           console.log(result);
           break;
         }
       }
-      console.log(result);
-      setSelectedVideoDataByChannel(result);
-      setSelectedChannel(channel);
-    },
-    [props.videoDataByChannel]
-  );
+    }
+    console.log(result);
+    setSelectedVideoDataByChannel(result);
+    setSelectedChannel(channel);
+    setModalOpen(true);
+  }, []);
   return (
     <div>
       <SubsChannelContainer
@@ -42,8 +46,8 @@ const SubsChannelBox = (props) => {
         <SubsChannelThumbnail>
           <img
             src={
-              typeof props.subsData.channelThumbnail === "object"
-                ? props.subsData.channelThumbnail.url
+              props.subsData.channel !== undefined
+                ? props.subsData.channel.thumbnail
                 : props.subsData.channelThumbnail
             }
             alt={props.subsData.channelTitle}
@@ -51,14 +55,16 @@ const SubsChannelBox = (props) => {
         </SubsChannelThumbnail>
         <SubsChannelCategory></SubsChannelCategory>
         <SubsChannelTitle subs={props.subsData.subs}>
-          {props.subsData.channelTitle}
+          {props.subsData.channel !== undefined
+            ? props.subsData.channel.title
+            : props.subsData.channelTitle}
         </SubsChannelTitle>
         <SubsChannelSubsCount></SubsChannelSubsCount>
         {props.subsDuring === "true" ? (
           <SubsChannelDate subs={props.subsData.subs}>
             {props.subsData.subs === false
               ? "미구독"
-              : "구독기간:" + formatDateAgo(props.subsData.subsDate)}
+              : "구독기간:" + formatDateAgo(props.subsData.channel.subsDate)}
           </SubsChannelDate>
         ) : (
           <SubsChannelDate subs={props.subsData.subs}>
@@ -74,6 +80,7 @@ const SubsChannelBox = (props) => {
           selectedChannel={selectedChannel}
           selectedVideoDataByChannel={selectedVideoDataByChannel}
           setResultModalOpen={setResultModalOpen}
+          topDNAType={props.topDNAType}
         />
       )}
       {resultModalOpen && (

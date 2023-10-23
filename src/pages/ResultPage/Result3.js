@@ -22,7 +22,7 @@ const Result3 = (props) => {
       if (response.data.items[0].brandingSettings.image !== undefined) {
         const channelBanner =
           response.data.items[0].brandingSettings.image.bannerExternalUrl;
-        props.subsData[i]["channelBanner"] = channelBanner;
+        props.subsData[i]["banner"] = channelBanner;
       }
       props.subsData[i]["subsCount"] =
         response.data.items[0].statistics.subscriberCount;
@@ -44,12 +44,13 @@ const Result3 = (props) => {
       <Title>{category[props.topDNAType]}</Title>
       <LikedTitle>최근 구독한 채널</LikedTitle>
       <SubsContainer>
-        {props.subsData.slice(0, 3).map((data, index) => (
+        {props.subsData.slice(0, 6).map((data, index) => (
           <SubsChannelBox
             key={index}
             subsData={data}
             setModalOpen={props.setModalOpen}
             videoDataByChannel={props.videoDataByChannel}
+            topDNAType={props.topDNAType}
           />
         ))}
       </SubsContainer>
@@ -89,7 +90,9 @@ const VideoContainer = styled.div`
 
 const SubsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  overflow-x: auto; /* 가로 스크롤을 활성화합니다. */
+  width: 100%; /* 가로 스크롤이 나타나도록 부모 요소의 너비를 조절합니다. */
 `;
 
 const LikedTitle = styled.div`

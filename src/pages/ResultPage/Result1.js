@@ -3,6 +3,39 @@ import { styled } from "styled-components";
 import category from "../../utils/category_compare.json";
 const Result1 = (props) => {
   console.log(props);
+  // const tempImages = {
+  //   Business/Entrepreneurship : "/images/character / temp / movie.svg",
+  //     "/images/character/temp/ittech.svg",
+  //   "/images/character/temp/pet.svg",
+  //   "/images/character/temp/selfimporvement.svg",
+  //   "/images/character/temp/show.svg",
+  //   "/images/character/temp/soccer.svg",
+  //   "/images/character/temp/business.svg",
+  //   "/images/character/temp/car.svg",
+  //   "/images/character/temp/comedy.svg",
+  //   "/images/character/temp/game.svg",
+  //   "/images/character/temp/makeupbeauty.svg",
+  // };
+
+  const tempImages = {
+    "Business/Entrepreneurship": "/images/character/temp/business.svg",
+    Sports: "/images/character/temp/soccer.svg",
+    "SelfImprovement/Motivation": "/images/character/temp/selfimporvement.svg",
+    "IT/Tech": "/images/character/temp/ittech.svg",
+    "Makeup/Beauty": "/images/character/temp/makeupbeauty.svg",
+    Car: "/images/character/temp/car.svg",
+    Comedy: "/images/character/temp/comedy.svg",
+    Gameplay: "/images/character/temp/gameplay.svg",
+    Finance: "/images/character/temp/finance.svg",
+    "News/Politics": "/images/character/temp/news.svg",
+    "Travel Vlogs": "/images/character/temp/travel.svg",
+    "Shows&Talk Shows": "/images/character/temp/show.svg",
+    "Documentary Movies": "/images/character/temp/movie.svg",
+    "Fashion/Style": "/images/character/temp/fashion.svg",
+    "Sci-Fi/Fantasy Movies": "/images/character/temp/movie.svg",
+
+    // 다른 특성과 이미지 경로도 추가
+  };
 
   return (
     <Container>
@@ -11,9 +44,9 @@ const Result1 = (props) => {
       {/* <Title region="en">{props.topDNAType}</Title> */}
       <Title>{category[props.topDNAType]}</Title>
       <Banner>
-        <img src="/images/Travel Vlogs.svg" alt="banner" />
+        <img src={tempImages[props.topDNAType]} alt="banner" />
       </Banner>
-      <Description>{props.dnaInfoData.dnatitle}</Description>
+      {/* <Description>{props.dnaInfoData.dnatitle}</Description> */}
     </Container>
   );
 };
@@ -31,9 +64,12 @@ const Container = styled.div`
 `;
 
 const Banner = styled.div`
+  display: flex;
+  margin-top: -100px;
+  flex: 1;
+  align-items: center;
   img {
-    width: 192.91px;
-    height: 177px;
+    height: 36vh;
   }
 `;
 

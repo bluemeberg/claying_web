@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const localServerInstance = axios.create({
-  baseURL: "http://192.168.155.56:8080/",
+  baseURL: "http://192.168.155.56:8000/",
 });
 
 export const serverInstance = axios.create({

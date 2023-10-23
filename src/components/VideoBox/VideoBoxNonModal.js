@@ -10,23 +10,21 @@ const VideoBoxNonModal = (props) => {
     <div>
       <VideoBoxContainer>
         <VideoThumbnail>
-          <img
-            src={props.likedVideo.videoThumbnail}
-            alt={props.likedVideo.videoID}
-          />
+          <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
         </VideoThumbnail>
-        <VideoCategory>{category[props.likedVideo.dnatype]}</VideoCategory>
+        <VideoCategory>
+          {category[props.likedVideo.detail_category]}
+        </VideoCategory>
 
         <ChannelBox>
           <ChannelInfo>
             <VideoTitle>
-              {props.likedVideo.videoTitle.length > 20
-                ? props.likedVideo.videoTitle.slice(0, 20) + "..."
-                : props.likedVideo.videoTitle}
+              {props.likedVideo.title.length > 20
+                ? props.likedVideo.title.slice(0, 20) + "..."
+                : props.likedVideo.title}
             </VideoTitle>
             <ChannelTitle>
-              조회수 {formatNumber(props.likedVideo.viewCount)}회 *{" "}
-              {getTimeAgo(props.likedVideo.uploadDate)}
+              {getTimeAgo(props.likedVideo.upload_date)}
             </ChannelTitle>
           </ChannelInfo>
         </ChannelBox>

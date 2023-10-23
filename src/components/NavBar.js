@@ -36,6 +36,10 @@ const NavBar = (props) => {
     navigate(-1);
   }, [navigate]);
 
+  const handleGoHome = useCallback(() => {
+    navigate("/");
+  }, []);
+
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggleSignout = useCallback(() => {
     setIsExpanded(!isExpanded);
@@ -50,7 +54,7 @@ const NavBar = (props) => {
           <BackButton onClick={handleGoBack}>
             <img src="/images/BackButton.svg" alt="back" />
           </BackButton>
-          <Logo>
+          <Logo onClick={handleGoHome}>
             {props.color === "white" ? (
               <TextLogo color="white">CLAYING</TextLogo>
             ) : (
@@ -59,7 +63,7 @@ const NavBar = (props) => {
           </Logo>
         </>
       ) : (
-        <Logo>
+        <Logo onClick={handleGoHome}>
           {props.color === "white" ? (
             <TextLogo color="white">CLAYING</TextLogo>
           ) : (
@@ -158,10 +162,9 @@ const UserImg = styled.img`
 `;
 
 const TextLogo = styled.div`
-  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@0,700;0,900&display=swap");
   color: ${(props) => (props.color === "white" ? "white" : "#3C95FF")};
-  font-family: Poppins;
-  font-size: 18px;
+  font-family: Pretendard;
+  font-size: 20px;
   font-style: normal;
   font-weight: 900;
   line-height: normal;

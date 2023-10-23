@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import AnalysisPage from "./pages/AnalysisPage/AnalysisPage";
 import FindPage from "./pages/FindPage/FindPage";
-import LoadingPage2 from "./pages/LoginPage/LoadingPage2";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import CompletionPage from "./pages/ResultPage/CompletionPage";

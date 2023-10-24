@@ -14,10 +14,10 @@ const LoginPage = () => {
     const result = await signInWithPopup(auth, provider);
     localStorage.setItem("userData", JSON.stringify(result.user));
     // user email post
-    const postResult = await serverInstance.post("/users/", {
-      email: result.user.email,
-    });
-    console.log(postResult);
+    // const postResult = await serverInstance.post("/users/", {
+    //   email: result.user.email,
+    // });
+    // console.log(postResult);
     navigate(`/analysis`, {
       state: {
         photoUrl: result.user.photoURL,

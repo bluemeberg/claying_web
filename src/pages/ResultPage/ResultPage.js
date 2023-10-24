@@ -184,13 +184,15 @@ const ResultPage = () => {
             <img src="/images/RightArrow.svg" alt="rightArrow" />
           </div>
           <Swiper
-            pagination={true}
             navigation={{
               nextEl: ".next",
               prevEl: ".prev",
             }}
-            modules={[Pagination, Navigation]}
+            modules={[Navigation]}
             className="mySwiper"
+            allowTouchMove={false} // 스와이프 기능 끄기
+            slidesPerView={1}
+            spaceBetween={20}
           >
             <SwiperSlide>
               <Result1
@@ -244,13 +246,15 @@ const ResultPage = () => {
             <img src="/images/RightArrow.svg" alt="rightArrow" />
           </div>
           <Swiper
-            pagination={true}
             navigation={{
               nextEl: ".next",
               prevEl: ".prev",
             }}
-            modules={[Pagination, Navigation]}
+            modules={[Navigation]}
             className="mySwiper"
+            allowTouchMove={false} // 스와이프 기능 끄기
+            slidesPerView={1}
+            spaceBetween={20}
           >
             <SwiperSlide>
               <Result1

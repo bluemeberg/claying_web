@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { youtubeDataAPIInstacne, youtubeGeneralAPI } from "../../api/axios";
 import ChannelModal from "../ChannelModal";
 import UnknownChannelModal from "../UnknownChannelModal";
-
+import category from "../../utils/category_real.json";
 const NewChannelBox = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState();
@@ -32,11 +32,22 @@ const NewChannelBox = (props) => {
   // useEffect(() => {
   //   handleGetChannelInfo();
   // }, []);
-  console.log(props.props);
-
+  console.log(props);
+  // 231024 to do list
+  // 4번째 데이터만 보여주도록
+  //
   return (
-    <>
-      <NewChannelContainer subs={props.props.channelSubscribeCount}>
+    <NewChannelParentContainer>
+      {props.props.users.length !== 0 ? (
+        <NewChannnelUser>
+          {category[props.props.users[0].detail_category]} 성향(20%)의 <br />
+          클레잉 유저들이 좋아합니다
+        </NewChannnelUser>
+      ) : (
+        <NewChannnelUser></NewChannnelUser>
+      )}
+      <NewChannelContainer users={props.props.users.length}>
+        {/* <NewChannelContainer subs={props.props.channel.sub_count}> */}
         <NewChannelSubsNumber>
           {props.props.channel.sub_count >= 10000 &&
           props.props.channel.sub_count < 50000
@@ -55,17 +66,17 @@ const NewChannelBox = (props) => {
             alt={props.props.channel.title}
           />
         </NewChannelThumbanil>
-        {props.props.channel.sub_count >= 500000 ? (
-          <NewChannelBlur></NewChannelBlur>
+        {props.index + 1 === props.length ? (
+          <NewChannelBlur> </NewChannelBlur>
         ) : (
           <></>
         )}
-        {props.props.channel.sub_count >= 500000 ? (
+        {props.index + 1 === props.length ? (
           <NewChannelTitle>???</NewChannelTitle>
         ) : (
           <NewChannelTitle>{props.props.channel.title}</NewChannelTitle>
         )}
-        {props.props.channel.sub_count >= 500000 ? (
+        {props.index + 1 === props.length ? (
           <DetailButton subs="false"></DetailButton>
         ) : (
           <DetailButton onClick={() => handleClick(props.props)}>
@@ -79,11 +90,25 @@ const NewChannelBox = (props) => {
           selectedChannel={selectedChannel}
         />
       )}
-    </>
+    </NewChannelParentContainer>
   );
 };
 
 export default NewChannelBox;
+
+const NewChannelParentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const NewChannnelUser = styled.div`
+  font-size: 8px;
+  display: flex;
+  justify-content: end;
+  text-align: end;
+  max-width: 140px;
+  min-height: 25px;
+`;
 
 const NewChannelContainer = styled.div`
   display: flex;
@@ -95,7 +120,7 @@ const NewChannelContainer = styled.div`
   gap: 10px;
   flex-shrink: 0;
   border-radius: 12px;
-  background: ${(props) => (props.subs >= 500000 ? "" : "#fff")};
+  background: ${(props) => (props.users !== 0 ? "#FFBB54" : "#fff")};
   margin-left: 8px;
   margin-right: 8px;
   margin-bottom: 8px;
@@ -165,9 +190,7 @@ const DetailButton = styled.div`
   gap: 10px;
   border-radius: 4px;
   background: ${(props) =>
-    props.subs === "false"
-      ? "rgba(241, 250, 255, 1)"
-      : "rgba(47, 168, 255, 0.15)"};
+    props.subs === "false" ? "" : "rgba(47, 168, 255, 0.15)"};
   color: #2fa8ff;
   font-family: Pretendard;
   font-size: 10px;

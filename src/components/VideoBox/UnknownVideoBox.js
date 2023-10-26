@@ -21,9 +21,15 @@ const UnknownVideoBox = (props) => {
         ></iframe>
       </VideoThumbnail>
       <VideoTitle>{props.hotVideo.title}</VideoTitle>
-      <VideoInformation>
-        인기급상승 {getTimeAgo(props.hotVideo.hot_time)}
-      </VideoInformation>
+      {props.selectedChannel.users.length !== 0 ? (
+        <VideoInformation>
+          업로드 {getTimeAgo(props.hotVideo.upload_date)}
+        </VideoInformation>
+      ) : (
+        <VideoInformation>
+          인기급상승 {getTimeAgo(props.hotVideo.hot_time)}
+        </VideoInformation>
+      )}
     </VideoContainer>
   );
 };

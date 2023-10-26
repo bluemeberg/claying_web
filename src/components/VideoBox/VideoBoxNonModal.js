@@ -9,13 +9,12 @@ const VideoBoxNonModal = (props) => {
   return (
     <div>
       <VideoBoxContainer>
-        <VideoThumbnail>
-          <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
-        </VideoThumbnail>
         <VideoCategory>
           {category[props.likedVideo.detail_category]}
         </VideoCategory>
-
+        <VideoThumbnail>
+          <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
+        </VideoThumbnail>
         <ChannelBox>
           <ChannelInfo>
             <VideoTitle>
@@ -40,7 +39,7 @@ const VideoBoxContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   margin-bottom: 12px;
-  margin-top: 24px;
+  margin-top: 40px;
   margin-left: 6px;
 `;
 
@@ -88,7 +87,7 @@ const ChannelTitle = styled.div`
   text-align: start;
 `;
 const VideoCategory = styled.div`
-  color: #fff9f9;
+  color: #3c95ff;
   font-family: Roboto;
   font-size: 14px;
   font-style: normal;
@@ -96,6 +95,5 @@ const VideoCategory = styled.div`
   line-height: 22px; /* 157.143% */
   margin-top: -32px;
   display: flex;
-  margin-left: 12px;
   margin-bottom: 4px;
 `;

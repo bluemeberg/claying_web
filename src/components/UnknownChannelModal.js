@@ -70,9 +70,15 @@ const UnknownChannelModal = (props) => {
           <ChannelVideoCount>
             동영상 {props.selectedChannel.channel.video_count}개
           </ChannelVideoCount>
-          <ChannelRecommendButton onClick={handleRecommendClick}>
-            관련 채널 더 발견하기
-          </ChannelRecommendButton>
+          {props.selectedChannel.users.length !== 0 ? (
+            <ChannelRecommendButton users="true" onClick={handleRecommendClick}>
+              좋아하는 클레잉 유저들 확인하기
+            </ChannelRecommendButton>
+          ) : (
+            <ChannelRecommendButton onClick={handleRecommendClick}>
+              관련 크리에이터 더 발견하기
+            </ChannelRecommendButton>
+          )}
           {/* 채널 설명 */}
           <ChannelDescritpion>
             {!isExpanded
@@ -83,7 +89,15 @@ const UnknownChannelModal = (props) => {
             {isExpanded ? "접기" : "펼치기"}
           </ChannelDescriptionMoreButton>
           <ChannelBoundary />
-          <LikedVideoSectionTitle>인기 급상승 영상 이력</LikedVideoSectionTitle>
+          {props.selectedChannel.users.length !== 0 ? (
+            <LikedVideoSectionTitle>
+              클레잉 유저가 좋아한 영상
+            </LikedVideoSectionTitle>
+          ) : (
+            <LikedVideoSectionTitle>
+              인기 급상승 영상 이력
+            </LikedVideoSectionTitle>
+          )}
           {/* map 문을 돌면서 확인 좋아하는 영상들 표출 피룡 */}
           <VideoContainer>
             {props.selectedChannel.videos.map((data, index) => (
@@ -206,8 +220,8 @@ const ChannelRecommendButton = styled.div`
   align-items: center;
   flex-shrink: 0;
   border-radius: 4px;
-  background: #3c95ff;
-  color: #fff;
+  background: ${(props) => (props.users === "true" ? "#FFBB54" : "#3c95ff")};
+  color: ${(props) => (props.users === "true" ? "black" : "#fff")};
   text-align: center;
   font-family: Pretendard;
   font-size: 14px;

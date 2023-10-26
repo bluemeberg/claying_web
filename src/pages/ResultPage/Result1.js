@@ -33,7 +33,6 @@ const Result1 = (props) => {
     "Documentary Movies": "/images/character/temp/movie.svg",
     "Fashion/Style": "/images/character/temp/fashion.svg",
     "Sci-Fi/Fantasy Movies": "/images/character/temp/movie.svg",
-
     // 다른 특성과 이미지 경로도 추가
   };
 
@@ -110,4 +109,15 @@ const Title = styled.div`
   line-height: 24px; /* 100% */
   letter-spacing: -0.48px;
   margin-bottom: 8px;
+`;
+const ResultButton = styled.div`
+  display: flex;
+  width: 312px;
+  height: 52px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background: #3c95ff;
+  color: white;
+  margin-bottom: 12px;
 `;

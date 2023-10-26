@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { styled } from "styled-components";
 import NewChannelBox from "../../components/ChannelBox/NewChannelBox";
 import SubsChannelBox from "../../components/ChannelBox/SubsChannelBox";
@@ -59,7 +59,10 @@ const FindChannelCategory = (props) => {
   //   console.log(unknownChannelList);
   // 결과를 저장할 빈 배열
   const selectedElements = [];
-
+  if (props.unknown.user.length !== 0) {
+    selectedElements.push(props.unknown.user[0]);
+  }
+  console.log(selectedElements);
   // 각 배열에서 조건에 맞게 요소를 선택
   if (props.unknown.a.some((item) => item.findPriority <= 2)) {
     selectedElements.push(
@@ -133,21 +136,36 @@ const FindChannelCategory = (props) => {
       }
     }
   }
+  if (selectedElements.length < 4 && props.unknown.user.length > 1) {
+    for (let i = 1; i < props.unknown.user.length; i++) {
+      if (selectedElements.length === 4) {
+        break;
+      }
+      selectedElements.push(props.unknown.user[i]);
+    }
+  }
   console.log(selectedElements);
   selectedElements.sort((a, b) => {
     return a.channel.sub_count - b.channel.sub_count;
   });
-
   console.log(selectedElements);
+
   return (
     <Container>
       <Title>이 채널, 좋아하실 것 같아요!</Title>
       <CategoryTitle>{category[props.unknown.dna_type]}</CategoryTitle>
       <SubsContainer>
-        {selectedElements.map((data, idex) => (
-          <NewChannelBox props={data} />
+        {selectedElements.slice(0, 4).map((data, index, length) => (
+          <NewChannelBox
+            props={data}
+            index={index}
+            length={selectedElements.length}
+          />
         ))}
       </SubsContainer>
+      <GoToAppButton>
+        앱 다운받고 {props.unknown.found_videos.length}개 채널 더 발견하기
+      </GoToAppButton>
     </Container>
   );
 };
@@ -200,4 +218,15 @@ const Title = styled.div`
 const SubsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+`;
+const GoToAppButton = styled.div`
+  display: flex;
+  width: 312px;
+  height: 52px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background: #3c95ff;
+  color: white;
+  margin-top: 40px;
 `;

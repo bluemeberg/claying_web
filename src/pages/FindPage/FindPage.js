@@ -1,11 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import FindChannelCategory from "./FindChannelCategory";
-
+import "./FindPage.css";
 const FindPage = () => {
   const location = useLocation();
   console.log(location.state);
@@ -57,15 +57,19 @@ const FindPage = () => {
   //     return acc;
   //   }, []);
   // console.log(foundVideoChannelByData);
+
   // 영상 카테고리 비중
   for (let i = 0; i < resultUnknownResult.length; i++) {
     if (resultUnknownResult[i].found_videos !== null) {
       resultUnknownResult[i].found_videos.forEach((item) => {
+        item["users"] = [];
         let count = 0;
-        console.log(item);
         item.videos.forEach((video) => {
           if (video.detail_category === resultUnknownResult[i].dna_type) {
             count++;
+          }
+          if (video.is_hot === false) {
+            item["users"].push(video);
           }
         });
         const totalItems = item.videos.length;
@@ -94,21 +98,29 @@ const FindPage = () => {
       resultUnknownResult[i]["b"] = [];
       resultUnknownResult[i]["c"] = [];
       resultUnknownResult[i]["d"] = [];
+      resultUnknownResult[i]["user"] = [];
       resultUnknownResult[i].found_videos.forEach((item) => {
-        if (item.channel.sub_count >= 10000 && item.channel.sub_count < 50000) {
-          resultUnknownResult[i]["a"].push(item);
-        } else if (
-          item.channel.sub_count >= 50000 &&
-          item.channel.sub_count < 100000
-        ) {
-          resultUnknownResult[i]["b"].push(item);
-        } else if (
-          item.channel.sub_count >= 100000 &&
-          item.channel.sub_count <= 500000
-        ) {
-          resultUnknownResult[i]["c"].push(item);
+        if (item.users.length !== 0) {
+          resultUnknownResult[i]["user"].push(item);
         } else {
-          resultUnknownResult[i]["d"].push(item);
+          if (
+            item.channel.sub_count >= 10000 &&
+            item.channel.sub_count < 50000
+          ) {
+            resultUnknownResult[i]["a"].push(item);
+          } else if (
+            item.channel.sub_count >= 50000 &&
+            item.channel.sub_count < 100000
+          ) {
+            resultUnknownResult[i]["b"].push(item);
+          } else if (
+            item.channel.sub_count >= 100000 &&
+            item.channel.sub_count <= 500000
+          ) {
+            resultUnknownResult[i]["c"].push(item);
+          } else {
+            resultUnknownResult[i]["d"].push(item);
+          }
         }
       });
     }
@@ -118,8 +130,12 @@ const FindPage = () => {
     // hotTime을 날짜로 변환하여 비교
     const dateA = new Date(a.hot_time);
     const dateB = new Date(b.hot_time);
-
     // 날짜를 비교하여 최신순으로 정렬
+    return dateB - dateA;
+  }, []);
+  const usersCustomSortVideo = useCallback((a, b) => {
+    const dateA = new Date(a.upload_date);
+    const dateB = new Date(a.upload_date);
     return dateB - dateA;
   }, []);
   const customSort = useCallback(
@@ -145,6 +161,17 @@ const FindPage = () => {
     [customSortVideo]
   );
 
+  const userCustomSort = useCallback(
+    (a, b) => {
+      a.users.sort(usersCustomSortVideo);
+      b.users.sort(usersCustomSortVideo);
+      const uploadDateA = new Date(a.users[0].upload_date);
+      const uploadDateB = new Date(b.users[0].upload_date);
+      return uploadDateB - uploadDateA;
+    },
+    [usersCustomSortVideo]
+  );
+
   for (let i = 0; i < resultUnknownResult.length; i++) {
     if (resultUnknownResult[i].channelList !== null) {
       if (resultUnknownResult[i]["a"].length !== 0) {
@@ -159,10 +186,12 @@ const FindPage = () => {
       if (resultUnknownResult[i]["d"].length !== 0) {
         resultUnknownResult[i]["d"].sort(customSort);
       }
+      if (resultUnknownResult[i]["user"].length !== 0) {
+        resultUnknownResult[i]["user"].sort(userCustomSort);
+      }
     }
   }
   console.log(resultUnknownResult);
-
   // 2. 유저 성향에 해당하는 영상이 많은 채널에 발견 우선순위 부여
   // 3. 또는 채널 별 전체 인기 영상 중 해당 카테고리 영상의 비중이 높은 순으로 채널 정렬
   // 3. 채널 비중이 같은 경우 영상 갯수가 많은 순으로 정렬
@@ -179,24 +208,22 @@ const FindPage = () => {
         <img src="/images/RightArrow.svg" alt="rightArrow" />
       </div>
       <Swiper
-        pagination={true}
         navigation={{
           nextEl: ".next",
           prevEl: ".prev",
         }}
-        modules={[Pagination, Navigation]}
+        modules={[Navigation]}
         className="mySwiper"
+        allowTouchMove={false} // 스와이프 기능 끄기
+        slidesPerView={1}
+        spaceBetween={20}
       >
         {resultUnknownResult.slice(0, 4).map((data, index) => (
           <SwiperSlide>
             <FindChannelCategory unknown={data} key={index} />
           </SwiperSlide>
         ))}
-        <SwiperSlide>
-          <div></div>
-        </SwiperSlide>
       </Swiper>
-      <GoToAppButton>앱 다운받고 8개 채널 더 발견하기</GoToAppButton>
     </Container>
   );
 };
@@ -212,16 +239,4 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #f1faff;
-`;
-
-const GoToAppButton = styled.div`
-  display: flex;
-  width: 312px;
-  height: 52px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  background: #3c95ff;
-  color: white;
-  margin-bottom: 12px;
 `;

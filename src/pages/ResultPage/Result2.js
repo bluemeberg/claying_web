@@ -196,7 +196,7 @@ const Result2 = (props) => {
             </BarChart>
             <BarChart
               width={300}
-              height={420}
+              height={400}
               data={data.slice(8, data.length)}
               layout="vertical"
             >

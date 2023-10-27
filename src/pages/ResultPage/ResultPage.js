@@ -276,7 +276,7 @@ const ResultPage = () => {
             <SwiperSlide>
               <Result3
                 setModalOpen={setModalOpen}
-                likedVideos={addCountLikedVideos}
+                likedVideos={data}
                 userInfo={userInfo.displayName}
                 topDNAType={rankedArray[0].dna_type}
                 subsData={subsData}

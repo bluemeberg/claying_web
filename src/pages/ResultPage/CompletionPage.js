@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
+import category from "../../utils/category_compare.json";
 
 const CompletionPage = () => {
   const images = [
@@ -15,19 +16,21 @@ const CompletionPage = () => {
     "/images/character/traveller.svg",
   ];
 
-  const tempImages = [
-    "/images/character/temp/movie.svg",
-    "/images/character/temp/ittech.svg",
-    "/images/character/temp/pet.svg",
-    "/images/character/temp/selfimporvement.svg",
-    "/images/character/temp/show.svg",
-    "/images/character/temp/soccer.svg",
-    "/images/character/temp/business.svg",
-    "/images/character/temp/car.svg",
-    "/images/character/temp/comedy.svg",
-    "/images/character/temp/game.svg",
-    "/images/character/temp/makeupbeauty.svg",
-  ];
+  const tempImages = {
+    "Drama Movies": "/images/character/temp/movie.svg",
+    "IT/Tech": "/images/character/temp/ittech.svg",
+    "Pet Video(Vlog)": "/images/character/temp/pet.svg",
+    "SelfImprovement/Motivation": "/images/character/temp/selfimporvement.svg",
+    "Shows/Talk Shows": "/images/character/temp/show.svg",
+    Soccer: "/images/character/temp/soccer.svg",
+    Finance: "/images/character/temp/finance.svg",
+    "Business/Entrepreneurship": "/images/character/temp/business.svg",
+    Car: "/images/character/temp/car.svg",
+    Comedy: "/images/character/temp/comedy.svg",
+    Gameplay: "/images/character/temp/game.svg",
+    "Makeup/Beauty": "/images/character/temp/makeupbeauty.svg",
+  };
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [fadeIn, setFadein] = useState(true);
 
@@ -46,18 +49,29 @@ const CompletionPage = () => {
   const handleButtonClick = useCallback(() => {
     navigate("/result", { state: location.state });
   }, [location.state, navigate]);
+
+  const [currentCategory, setCurrentCategory] = useState("Drama Movies");
+  const [currentImage, setCurrentImage] = useState(tempImages[currentCategory]);
   useEffect(() => {
     if (location.state === null) {
       navigate("/login", {});
     }
-    const timer = setTimeout(() => {
-      handleNextImage();
-    }, 500);
-    return () => {
-      clearTimeout(timer);
+    // 주기적으로 이미지를 변경하는 함수
+    const changeImage = () => {
+      const categories = Object.keys(tempImages);
+      const currentIndex = categories.indexOf(currentCategory);
+      const nextIndex = (currentIndex + 1) % categories.length;
+      const nextCategory = categories[nextIndex];
+      setCurrentCategory(nextCategory);
+      setCurrentImage(tempImages[nextCategory]);
     };
-  }, [currentImageIndex]);
 
+    // 5초마다 이미지 변경
+    const intervalId = setInterval(changeImage, 500);
+
+    // 컴포넌트 언마운트 시 clearInterval
+    return () => clearInterval(intervalId);
+  }, [currentCategory]);
   return (
     <Container>
       <NavBar color="white" />
@@ -65,11 +79,10 @@ const CompletionPage = () => {
       <Title>
         내가 유튜버라면<br></br> 어떤 크리에이터일까?
       </Title>
+      <CategoryTitle>{category[currentCategory]}</CategoryTitle>
+
       <Banner>
-        <img
-          src={tempImages[currentImageIndex]}
-          alt={`Image${currentImageIndex}`}
-        />
+        <img src={currentImage} alt={currentCategory} />
       </Banner>
       <Button onClick={handleButtonClick}>결과 확인하기</Button>
     </Container>
@@ -141,4 +154,15 @@ const Button = styled.div`
   position: absolute;
   bottom: 0;
   cursor: pointer;
+`;
+const CategoryTitle = styled.div`
+  color: #3c95ff;
+  text-align: center;
+  font-family: Roboto;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.32px;
+  margin-top: 28px;
 `;

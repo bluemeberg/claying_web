@@ -162,6 +162,7 @@ const Result4 = (props) => {
                 videoDataByChannel={props.videoDataByChannel}
                 topDNAType={props.topDNAType}
                 subsDuring="true"
+                number={4}
               />
             ))}
         {subsData !== undefined &&
@@ -174,6 +175,7 @@ const Result4 = (props) => {
                 setModalOpen={props.setModalOpen}
                 videoDataByChannel={props.videoDataByChannel}
                 topDNAType={props.topDNAType}
+                number={4}
               />
             ))}
       </SubsContainer>

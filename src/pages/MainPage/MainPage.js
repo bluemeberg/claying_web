@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
 import "./MainPage.css";
+import category from "../../utils/category_compare.json";
 const MainPage = () => {
   const images = [
     "/images/character/basketball.svg",
@@ -16,32 +17,20 @@ const MainPage = () => {
     "/images/character/traveller.svg",
   ];
 
-  const tempImages = [
-    "/images/character/temp/movie.svg",
-    "/images/character/temp/ittech.svg",
-    "/images/character/temp/pet.svg",
-    "/images/character/temp/selfimporvement.svg",
-    "/images/character/temp/show.svg",
-    "/images/character/temp/soccer.svg",
-    "/images/character/temp/business.svg",
-    "/images/character/temp/car.svg",
-    "/images/character/temp/comedy.svg",
-    "/images/character/temp/game.svg",
-    "/images/character/temp/makeupbeauty.svg",
-  ];
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [fadeIn, setFadein] = useState(true);
-
-  const handleNextImage = useCallback(() => {
-    setFadein(false);
-    setTimeout(() => {
-      setCurrentImageIndex((prevInex) =>
-        prevInex === images.length - 1 ? 0 : prevInex + 1
-      );
-      setFadein(true);
-    }, 500);
-  }, [images.length]);
+  const tempImages = {
+    "Drama Movies": "/images/character/temp/movie.svg",
+    "IT/Tech": "/images/character/temp/ittech.svg",
+    "Pet Video(Vlog)": "/images/character/temp/pet.svg",
+    "SelfImprovement/Motivation": "/images/character/temp/selfimporvement.svg",
+    "Shows/Talk Shows": "/images/character/temp/show.svg",
+    Soccer: "/images/character/temp/soccer.svg",
+    Finance: "/images/character/temp/finance.svg",
+    "Business/Entrepreneurship": "/images/character/temp/business.svg",
+    Car: "/images/character/temp/car.svg",
+    Comedy: "/images/character/temp/comedy.svg",
+    Gameplay: "/images/character/temp/game.svg",
+    "Makeup/Beauty": "/images/character/temp/makeupbeauty.svg",
+  };
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -84,14 +73,27 @@ const MainPage = () => {
     });
     // navigate("/login");
   }, [auth, initialUserData, navigate, pathname]);
+
+  const [currentCategory, setCurrentCategory] = useState("Drama Movies");
+  const [currentImage, setCurrentImage] = useState(tempImages[currentCategory]);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      handleNextImage();
-    }, 1000);
-    return () => {
-      clearTimeout(timer);
+    // 주기적으로 이미지를 변경하는 함수
+    const changeImage = () => {
+      const categories = Object.keys(tempImages);
+      const currentIndex = categories.indexOf(currentCategory);
+      const nextIndex = (currentIndex + 1) % categories.length;
+      const nextCategory = categories[nextIndex];
+      setCurrentCategory(nextCategory);
+      setCurrentImage(tempImages[nextCategory]);
     };
-  }, [currentImageIndex]);
+
+    // 5초마다 이미지 변경
+    const intervalId = setInterval(changeImage, 2000);
+
+    // 컴포넌트 언마운트 시 clearInterval
+    return () => clearInterval(intervalId);
+  }, [currentCategory]);
 
   const [showButton, setShowButton] = useState(true);
   const [showBottomButton, setShowBottomButton] = useState(false);
@@ -125,11 +127,9 @@ const MainPage = () => {
         <Title>
           내가 유튜버라면<br></br>어떤 크리에이터일까?
         </Title>
+        <CategoryTitle>{category[currentCategory]}</CategoryTitle>
         <Banner>
-          <img
-            src={tempImages[currentImageIndex]}
-            alt={`Image${currentImageIndex}`}
-          />
+          <img src={currentImage} alt={currentCategory} />
         </Banner>
         <SubTitle>
           Creative한 Playing, 클레잉에서<br></br>
@@ -154,26 +154,33 @@ const MainPage = () => {
           <br></br>
           <br></br>
           <span> 더 좋은, 더 많은 크리에이터</span>들을 <br></br>
-          <span>더 빠르게 경험</span>시키기 위한 미션을 가지고있습니다.<br></br>
+          <span>더 빠르게 경험</span>시키기 위한<br></br> 미션을 가지고있습니다.
+          <br></br>
           <br></br>전 세계 <span>1000만개</span>가 넘는 수익 창출 채널 중
           <br></br>내가 즐겨보는 채널은 몇 개인가요?
         </OverViewSubTitle>
       </OverViewSection>
       <OverViewSection2>
+        <OverViewTitle>
+          <span>How 클레잉?</span>
+        </OverViewTitle>
         <OverViewSubTitle>
-          How claying? 저희는 더 좋은, 더 많은 크리에이터를<br></br> 더 빠르게
-          발견하기 위해서 <br></br>
+          저희는 더 좋은, 더 많은 크리에이터를<br></br> 더 빠르게 발견하기
+          위해서 <br></br>
           <br></br>
-          <span>주변 친구들, 콘텐츠 성향이 유사한 유저</span>들 간의<br></br>{" "}
-          <span>유튜브 좋아요, 구독 정보</span>를 기반으로<br></br>{" "}
-          <span>유튜브 공간</span> 을 <span>연결</span>
+          <span>
+            주변 친구들,<br></br> 콘텐츠 성향이 유사한 유저
+          </span>
+          들 간의<br></br>
+          <br></br> <span>유튜브 좋아요, 구독 정보</span>를 기반으로
+          <br></br> <span>유튜브 공간</span> 을 <span>연결</span>
           시키고 있습니다.
         </OverViewSubTitle>
       </OverViewSection2>
       <OverViewSection3>
         <OverViewSubTitle>
-          1st. <br></br>콘텐츠 성향 분석 테스트를 통해<br></br> 유튜브 공간을
-          연결시킬 준비를 마칩니다.
+          클레잉 유저들은 <br></br>콘텐츠 성향 분석 테스트를 통해<br></br>{" "}
+          유튜브 공간을 연결시킬 준비를 마칩니다.
         </OverViewSubTitle>
         <OverViewSection2SubTitle>
           좋아요한 유튜브 영상,구독 채널을
@@ -189,11 +196,11 @@ const MainPage = () => {
       </OverViewSection3>
       <OverViewSection4>
         <OverViewSection4Title>
-          What claying? 분석 결과를 통해 무엇을 할 수 있나요?
+          분석 결과를 통해 무엇을 할 수 있나요?
         </OverViewSection4Title>
-        <OverviewSection4Symbol>1</OverviewSection4Symbol>
+        <OverviewSection4Symbol index={1}>1</OverviewSection4Symbol>
         <OverViewSection4Title sub="sub">
-          콘텐츠 성향 주변 친구들과 공유하기
+          주변 친구들과 콘텐츠 성향 공유하기
         </OverViewSection4Title>
         <OverViewSection4Content>
           <OverViewSection4Left>
@@ -228,8 +235,8 @@ const MainPage = () => {
         </OverViewSection4Img>
         <OverviewSection4Symbol>3</OverviewSection4Symbol>
         <OverViewSection4Title sub="sub">
-          콘텐츠 성향이 유사한 유저들이 <br></br> 좋아한 채널들 중 <br></br>{" "}
-          내가 아직 좋아하지 않은 채널 발견하기
+          콘텐츠 성향이 <br></br>유사한 유저들을 통해 <br></br>
+          내가 아직 좋아하지 않은<br></br> 채널 발견하기
         </OverViewSection4Title>
         <OverViewSection4Img sub="bottom">
           <img src="/images/HowSection5.svg" alt="how3" />
@@ -286,7 +293,6 @@ const Title = styled.h1`
 `;
 
 const Banner = styled.div`
-  margin-top: 28px;
   img {
     height: 30vh;
   }
@@ -303,6 +309,18 @@ const SubTitle = styled.div`
   display: flex;
   align-items: center;
   margin-top: 32px;
+`;
+
+const CategoryTitle = styled.div`
+  color: #3c95ff;
+  text-align: center;
+  font-family: Roboto;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.32px;
+  margin-top: 28px;
 `;
 
 const Button = styled.div`
@@ -356,6 +374,7 @@ const OverViewSection = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
 `;
 
 const OverViewTitle = styled.div`
@@ -400,11 +419,10 @@ const OverViewSection2 = styled.div`
   font-weight: 400;
   line-height: 24px; /* 150% */
   letter-spacing: -0.32px;
-  padding-top: 65px;
-  padding-bottom: 65px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   span {
     color: #429df2;
     font-weight: 900;
@@ -451,24 +469,25 @@ const OverViewSection3 = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  text-align: center;
 `;
 
 const OverViewSection4 = styled.div`
   background-color: #f1faff;
-  align-items: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const OverViewSection4Title = styled.div`
   color: #000;
   font-family: Roboto;
-  font-size: 16px;
+  font-size: ${(props) => (props.sub === "sub" ? "3vh" : "2.4vh")};
   font-style: normal;
-  font-weight: ${(props) => (props.sub === "sub" ? "400" : "400")};
-  line-height: 24px; /* 150% */
+  font-weight: ${(props) => (props.sub === "sub" ? "900" : "400")};
+  line-height: 32px; /* 150% */
   letter-spacing: -0.32px;
-  margin-top: ${(props) => (props.sub === "sub" ? "12px" : "52px")};
+  margin-top: ${(props) => (props.sub === "sub" ? "12px" : "80px")};
   margin-bottom: ${(props) => (props.sub === "sub" ? "40px" : "0px")};
   text-align: center;
 `;
@@ -489,7 +508,7 @@ const OverviewSection4Symbol = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 80px;
+  margin-top: ${(props) => (props.index === 1 ? "60px" : "80px")};
 `;
 
 const OverViewSection4Content = styled.div`

@@ -40,30 +40,28 @@ const VideoBox = (props) => {
     <div>
       <VideoBoxContainer onClick={() => handleClick(props.likedVideo)}>
         <VideoCategory>
-          {category[props.likedVideo.video.detail_category]}
+          {props.likedVideo.detail_category !== "string" ? (
+            category[props.likedVideo.video.detail_category]
+          ) : (
+            <></>
+          )}
         </VideoCategory>
         <VideoThumbnail>
-          <img
-            src={props.likedVideo.video.thumbnail}
-            alt={props.likedVideo.video.id}
-          />
+          <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
         </VideoThumbnail>
         <ChannelBox>
           <ChannelThumbnail>
-            <img
-              src={props.likedVideo.channel.thumbnail}
-              alt={props.likedVideo.channel.id}
-            />
+            <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
           </ChannelThumbnail>
           <ChannelInfo>
             <VideoTitle>
-              {props.likedVideo.video.title.length > 15
-                ? props.likedVideo.video.title.slice(0, 13) + "..."
-                : props.likedVideo.video.title}
+              {props.likedVideo.title.length > 15
+                ? props.likedVideo.title.slice(0, 13) + "..."
+                : props.likedVideo.title}
             </VideoTitle>
             <ChannelTitle>
-              {props.likedVideo.channel.title} *{" "}
-              {getTimeAgo(props.likedVideo.video.upload_date)}
+              {props.likedVideo.title} *{" "}
+              {getTimeAgo(props.likedVideo.upload_date)}
             </ChannelTitle>
           </ChannelInfo>
         </ChannelBox>

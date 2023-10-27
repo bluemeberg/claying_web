@@ -339,7 +339,9 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
           // 요청 또는 타임아웃 중 먼저 발생하는 이벤트를 처리
           const result = await Promise.race([resultPromise, timeoutPromise]);
           console.log(result);
-          batches.push(result.data);
+          if (result.data.video.detail_category !== null) {
+            batches.push(result.data);
+          }
           setVideoAnalysisCount((prevValue) => prevValue + 1);
           let a = (1 / videoData.length) * 100;
           if (i === numBatches - 1) {
@@ -502,7 +504,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         },
         subscribe_channel_ids: uniqueUserChannelIDs,
       });
-      console.log(foundResult.data);
+      console.log(foundResult);
       for (let i = 0; i < resultArray.length; i++) {
         dnaTypeNames = [...dnaTypeNames, resultArray[i].value];
       }
@@ -515,7 +517,6 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         userChannelIDs: uniqueUserChannelIDs,
         dnaTypeNames: dnaTypeNames,
         dnaTypeCollections: resultArray,
-        foundChannel: foundResult.data,
       };
     },
     []
@@ -639,63 +640,49 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         batch
       );
       console.log(videoAnalysisResult);
-      if (videoAnalysisResult.length === videoData.length) {
-        // for (let i = 0; i < videoData.length; i++) {
-        //   videoData[i].dnatype = videoAnalysisResult[i].dna[0].dnatype;
-        // }
-        // console.log(videoAnalysisResult);
-        const { userSubsData, userSubsChannels } =
-          await handleYoutubeSubsData();
-        console.log(userSubsData);
-        userSubsData.sort(
-          (a, b) => new Date(b.subsDate) - new Date(a.subsDate)
-        );
-        console.log(userSubsData);
+      // for (let i = 0; i < videoData.length; i++) {
+      //   videoData[i].dnatype = videoAnalysisResult[i].dna[0].dnatype;
+      // }
+      // console.log(videoAnalysisResult);
+      const { userSubsData, userSubsChannels } = await handleYoutubeSubsData();
+      console.log(userSubsData);
+      userSubsData.sort((a, b) => new Date(b.subsDate) - new Date(a.subsDate));
+      console.log(userSubsData);
 
-        // 채널 정보 기반으로 좋아하는 영상 정보 누적시킨 정리 데이터
-        const videoDataByChannel = handleYoutubeDataSortByChannel(
-          videoAnalysisResult,
-          userSubsData,
-          userSubsChannels
-        );
+      // 채널 정보 기반으로 좋아하는 영상 정보 누적시킨 정리 데이터
+      const videoDataByChannel = handleYoutubeDataSortByChannel(
+        videoAnalysisResult,
+        userSubsData,
+        userSubsChannels
+      );
 
-        // 구독 채널 별 상세 카테고리 분석
-        const subsAnalysisResult = await handleSubsChannelProcessBatch(
-          [],
-          batch
-        );
+      // 구독 채널 별 상세 카테고리 분석
+      const subsAnalysisResult = await handleSubsChannelProcessBatch([], batch);
 
-        const {
-          userChannelIDs,
-          dnaTypeNames,
-          dnaTypeCollections,
-          foundChannel,
-        } = await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
-        console.log(userChannelIDs);
-        // const result = await handleGetUnknownChannelList(
-        //   userChannelIDs,
-        //   dnaTypeNames
-        // );
-        console.log(videoAnalysisResult);
-        console.log(subsAnalysisResult);
-        console.log(longLikedVideoData);
-        console.log(videoData);
-        console.log(subsChannels);
-        console.log(dnaTypeCollections);
-        // console.log(result);
-        console.log(videoDataByChannel);
-        navigate(`/complete`, {
-          state: {
-            videoData: videoAnalysisResult,
-            subsData: userSubsData,
-            dnaTypeCollections: dnaTypeCollections,
-            unknownResult: foundChannel,
-            videoDataByChannel: videoDataByChannel,
-          },
-        });
-      } else {
-        // 다시 시작하기 버튼 대기
-      }
+      const { userChannelIDs, dnaTypeNames, dnaTypeCollections } =
+        await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
+      console.log(userChannelIDs);
+      // const result = await handleGetUnknownChannelList(
+      //   userChannelIDs,
+      //   dnaTypeNames
+      // );
+      console.log(videoAnalysisResult);
+      console.log(subsAnalysisResult);
+      console.log(longLikedVideoData);
+      console.log(videoData);
+      console.log(subsChannels);
+      console.log(dnaTypeCollections);
+      // console.log(result);
+      console.log(videoDataByChannel);
+      navigate(`/complete`, {
+        state: {
+          videoData: videoData,
+          subsData: userSubsData,
+          dnaTypeCollections: dnaTypeCollections,
+          // unknownResult: result,
+          videoDataByChannel: videoDataByChannel,
+        },
+      });
     },
     [
       handleLikedVideoProcessBatch,

@@ -482,7 +482,7 @@ const OverViewSection4 = styled.div`
 const OverViewSection4Title = styled.div`
   color: #000;
   font-family: Roboto;
-  font-size: ${(props) => (props.sub === "sub" ? "3vh" : "2.4vh")};
+  font-size: ${(props) => (props.sub === "sub" ? "2.7vh" : "2.4vh")};
   font-style: normal;
   font-weight: ${(props) => (props.sub === "sub" ? "900" : "400")};
   line-height: 32px; /* 150% */
@@ -551,7 +551,6 @@ const OverViewSection4Img = styled.div`
 
 const OverViewSection5 = styled.div`
   display: flex;
-  margin-left: 32px;
   margin-top: 60px;
   margin-bottom: 160px;
   align-items: center;
@@ -561,10 +560,10 @@ const OverViewSection5 = styled.div`
 const OverViewSection5Title = styled.div`
   color: #000;
   font-family: Roboto;
-  font-size: 16px;
+  font-size: 2.5vh;
   font-style: normal;
-  font-weight: 400;
-  line-height: 24px; /* 100% */
+  font-weight: 700;
+  line-height: 32px; /* 100% */
   letter-spacing: -0.32px;
-  min-width: 310px;
+  text-align: center;
 `;

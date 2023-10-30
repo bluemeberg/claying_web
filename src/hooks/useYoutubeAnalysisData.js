@@ -322,10 +322,11 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
     async (videoData, batchSize) => {
       const batches = [];
       const numBatches = Math.ceil(videoData.length / batchSize);
+      let count = 0;
       for (let i = 0; i < numBatches; i++) {
-        console.log(videoData[i]);
         const start = i * batchSize;
         const end = start + batchSize;
+        count = end;
         const batch = videoData.slice(start, end);
         // const result = await fetchData(batch);
         try {
@@ -334,7 +335,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
           const timeoutPromise = new Promise((resolve, reject) => {
             setTimeout(() => {
               reject(new Error("요청 시간 초과"));
-            }, 6000); // 1분 타임아웃
+            }, 20000); // 1분 타임아웃
           });
           // 요청 또는 타임아웃 중 먼저 발생하는 이벤트를 처리
           const result = await Promise.race([resultPromise, timeoutPromise]);
@@ -376,7 +377,10 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         // setVideoDNA(result.data.dna[0].dnatype);
         // console.log(videoData);
       }
-      return batches;
+      return {
+        videoAnalysisResult: batches,
+        videoCount: count,
+      };
     },
     [progressData]
   );
@@ -498,28 +502,32 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       let userInfo = localStorage.getItem("userData");
       userInfo = JSON.parse(userInfo);
       console.log(userInfo);
-      const foundResult = await serverInstance.post("/dna/find", {
-        user_dnas: {
-          email: userInfo.email,
-          dnas: resultArray,
-        },
-        subscribe_channel_ids: uniqueUserChannelIDs,
-      });
-      console.log(foundResult);
-      for (let i = 0; i < resultArray.length; i++) {
-        dnaTypeNames = [...dnaTypeNames, resultArray[i].value];
+      console.log(timeoutFlag);
+      if (timeoutFlag === false) {
+        const foundResult = await serverInstance.post("/dna/find", {
+          user_dnas: {
+            email: userInfo.email,
+            dnas: resultArray,
+          },
+          subscribe_channel_ids: uniqueUserChannelIDs,
+        });
+        console.log(foundResult);
+        for (let i = 0; i < resultArray.length; i++) {
+          dnaTypeNames = [...dnaTypeNames, resultArray[i].value];
+        }
+        console.log(dnaTypeNames);
+        dnaTypeNames = dnaTypeNames.join(",");
+        uniqueUserChannelIDs = uniqueUserChannelIDs.join(",");
+        console.log(uniqueUserChannelIDs);
+        console.log(dnaTypeNames);
+        return {
+          userChannelIDs: uniqueUserChannelIDs,
+          dnaTypeNames: dnaTypeNames,
+          dnaTypeCollections: resultArray,
+          foundChannel: foundResult,
+        };
+      } else {
       }
-      console.log(dnaTypeNames);
-      dnaTypeNames = dnaTypeNames.join(",");
-      uniqueUserChannelIDs = uniqueUserChannelIDs.join(",");
-      console.log(uniqueUserChannelIDs);
-      console.log(dnaTypeNames);
-      return {
-        userChannelIDs: uniqueUserChannelIDs,
-        dnaTypeNames: dnaTypeNames,
-        dnaTypeCollections: resultArray,
-        foundChannel: foundResult,
-      };
     },
     []
   );
@@ -636,11 +644,10 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       // 유저가 좋아요한 영상 데이터 불러오기
       const videoData = await handleYoutubeLikedVideo();
       // 좋아요한 영상 카테고리 분석 결과
-      const videoAnalysisResult = await handleLikedVideoProcessBatch(
-        videoData,
-        batch
-      );
+      const { videoAnalysisResult, videoCount } =
+        await handleLikedVideoProcessBatch(videoData, batch);
       console.log(videoAnalysisResult);
+      console.log(videoCount);
       // for (let i = 0; i < videoData.length; i++) {
       //   videoData[i].dnatype = videoAnalysisResult[i].dna[0].dnatype;
       // }
@@ -660,31 +667,38 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       // 구독 채널 별 상세 카테고리 분석
       const subsAnalysisResult = await handleSubsChannelProcessBatch([], batch);
 
-      const { userChannelIDs, dnaTypeNames, dnaTypeCollections, foundChannel } =
-        await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
-      console.log(userChannelIDs);
-      // const result = await handleGetUnknownChannelList(
-      //   userChannelIDs,
-      //   dnaTypeNames
-      // );
-      console.log(foundChannel.data.found_dnas);
-      console.log(videoAnalysisResult);
-      console.log(subsAnalysisResult);
-      console.log(longLikedVideoData);
-      console.log(videoData);
-      console.log(subsChannels);
-      console.log(dnaTypeCollections);
-      // console.log(result);
-      console.log(videoDataByChannel);
-      navigate(`/complete`, {
-        state: {
-          videoData: videoAnalysisResult,
-          subsData: userSubsData,
-          dnaTypeCollections: dnaTypeCollections,
-          unknownResult: foundChannel.data.found_dnas,
-          videoDataByChannel: videoDataByChannel,
-        },
-      });
+      if (videoCount === videoData.length) {
+        const {
+          userChannelIDs,
+          dnaTypeNames,
+          dnaTypeCollections,
+          foundChannel,
+        } = await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
+        console.log(userChannelIDs);
+        // const result = await handleGetUnknownChannelList(
+        //   userChannelIDs,
+        //   dnaTypeNames
+        // );
+        console.log(foundChannel.data.found_dnas);
+        console.log(videoAnalysisResult);
+        console.log(subsAnalysisResult);
+        console.log(longLikedVideoData);
+        console.log(videoData);
+        console.log(subsChannels);
+        console.log(dnaTypeCollections);
+        // console.log(result);
+        console.log(videoDataByChannel);
+        navigate(`/complete`, {
+          state: {
+            videoData: videoAnalysisResult,
+            subsData: userSubsData,
+            dnaTypeCollections: dnaTypeCollections,
+            unknownResult: foundChannel.data.found_dnas,
+            videoDataByChannel: videoDataByChannel,
+          },
+        });
+      } else {
+      }
     },
     [
       handleLikedVideoProcessBatch,

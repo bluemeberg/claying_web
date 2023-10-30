@@ -353,6 +353,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
           setVideoThumbnail(videoData[i].thumbnail);
           setVideoTitle(videoData[i].title);
           setVideoDNA(result.data.video.detail_category);
+          videoData[i].detail_category = result.data.video.detail_category;
           console.log(videoData);
         } catch (error) {
           if (error.message === "요청 시간 초과") {
@@ -517,6 +518,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
         userChannelIDs: uniqueUserChannelIDs,
         dnaTypeNames: dnaTypeNames,
         dnaTypeCollections: resultArray,
+        foundChannel: foundResult,
       };
     },
     []
@@ -576,7 +578,6 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       videoData.forEach((item) => {
         const channelData = item.channel;
         const videoData = item.video;
-
         // 채널 배열에서 해당 채널을 찾음
         const existingChannel = channelVideosArray.find((channelItem) => {
           return channelItem.channel.id === channelData.id;
@@ -659,13 +660,14 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       // 구독 채널 별 상세 카테고리 분석
       const subsAnalysisResult = await handleSubsChannelProcessBatch([], batch);
 
-      const { userChannelIDs, dnaTypeNames, dnaTypeCollections } =
+      const { userChannelIDs, dnaTypeNames, dnaTypeCollections, foundChannel } =
         await handleResultTuning(videoAnalysisResult, [], userSubsChannels);
       console.log(userChannelIDs);
       // const result = await handleGetUnknownChannelList(
       //   userChannelIDs,
       //   dnaTypeNames
       // );
+      console.log(foundChannel.data.found_dnas);
       console.log(videoAnalysisResult);
       console.log(subsAnalysisResult);
       console.log(longLikedVideoData);
@@ -676,10 +678,10 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       console.log(videoDataByChannel);
       navigate(`/complete`, {
         state: {
-          videoData: videoData,
+          videoData: videoAnalysisResult,
           subsData: userSubsData,
           dnaTypeCollections: dnaTypeCollections,
-          // unknownResult: result,
+          unknownResult: foundChannel.data.found_dnas,
           videoDataByChannel: videoDataByChannel,
         },
       });

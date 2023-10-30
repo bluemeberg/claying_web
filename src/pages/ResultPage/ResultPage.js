@@ -2,7 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Controller,
+  Thumbs,
+} from "swiper/modules";
 
 import NavBar from "../../components/NavBar";
 import category from "../../utils/category_compare.json";
@@ -157,6 +164,8 @@ const ResultPage = () => {
       navigate("/login", {});
     }
   }, []);
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+
   const HandleSetting = useCallback(() => {
     // 배열에서 가장 큰 percentage 값을 찾기
     let maxPercentage = 0;
@@ -176,11 +185,9 @@ const ResultPage = () => {
       return (
         <>
           <div className="prev">
-            {" "}
             <img src="/images/LeftArrow.svg" alt="leftArrow" />
           </div>
           <div className="next">
-            {" "}
             <img src="/images/RightArrow.svg" alt="rightArrow" />
           </div>
           <Swiper
@@ -188,13 +195,25 @@ const ResultPage = () => {
               nextEl: ".next",
               prevEl: ".prev",
             }}
-            modules={[Navigation]}
+            modules={[
+              Navigation,
+              Pagination,
+              Scrollbar,
+              A11y,
+              Controller,
+              Thumbs,
+            ]}
             className="mySwiper"
             allowTouchMove={false} // 스와이프 기능 끄기
             slidesPerView={1}
             spaceBetween={20}
+            onSlideChange={(index) => console.log(index)}
+            scrollbar={{ draggable: true }}
           >
             <SwiperSlide>
+              {({ isActive }) => (
+                <div>Current slide is {isActive ? "active" : "not active"}</div>
+              )}
               <Result1
                 dnaInfoData={unknownResult}
                 dnaMaxCountInfo={maxPercentageItems}
@@ -369,4 +388,9 @@ const ResultButton = styled.div`
   background: #3c95ff;
   color: white;
   margin-bottom: 12px;
+`;
+
+const Wrap = styled.div`
+  width: 95%;
+  height: 95%;
 `;

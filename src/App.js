@@ -6,6 +6,9 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import MainPage from "./pages/MainPage/MainPage";
 import CompletionPage from "./pages/ResultPage/CompletionPage";
 import ResultPage from "./pages/ResultPage/ResultPage";
+import RecommendChannel from "./pages/ResultPage/RecommendChannel";
+import RecommendVideo from "./pages/ResultPage/RecommendVideo";
+import FindChannel from "./pages/FindPage/FindChannel";
 
 function App() {
   return (
@@ -15,7 +18,10 @@ function App() {
       <Route path="/analysis" element={<AnalysisPage />} />
       <Route path="/complete" element={<CompletionPage />} />
       <Route path="/result" element={<ResultPage />} />
+      <Route path="/result/channel/:channelId" element={<RecommendChannel />} />
+      <Route path="/result/video/:videoId" element={<RecommendVideo />} />
       <Route path="/find" element={<FindPage />} />
+      <Route path="/find/:channelId" element={<FindChannel />} />
     </Routes>
   );
 }

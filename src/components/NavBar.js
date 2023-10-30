@@ -48,26 +48,26 @@ const NavBar = (props) => {
     handleUserInfo();
   });
   return (
-    <NavWrapper>
+    <NavWrapper color={props.color}>
       {props.back === true ? (
         <>
           <BackButton onClick={handleGoBack}>
             <img src="/images/BackButton.svg" alt="back" />
           </BackButton>
           <Logo onClick={handleGoHome}>
-            {props.color === "white" ? (
-              <TextLogo color="white">CLAYING</TextLogo>
+            {props.color === "white" || props.color === "blue" ? (
+              <img src="/images/Logo_white.svg" alt="logo" />
             ) : (
-              <TextLogo>CLAYING</TextLogo>
+              <img src="/images/Logo_blue.svg" alt="logo" />
             )}
           </Logo>
         </>
       ) : (
         <Logo onClick={handleGoHome}>
-          {props.color === "white" ? (
-            <TextLogo color="white">CLAYING</TextLogo>
+          {props.color === "white" || props.color === "blue" ? (
+            <img src="/images/Logo_white.svg" alt="logo" />
           ) : (
-            <TextLogo>CLAYING</TextLogo>
+            <img src="/images/Logo_blue.svg" alt="logo" />
           )}
         </Logo>
       )}
@@ -96,17 +96,21 @@ const NavBar = (props) => {
 export default NavBar;
 
 const NavWrapper = styled.nav`
-  margin-top: 28px;
+  height: 60px;
   padding: 0 36px;
   position: fixed;
-  min-width: 310px;
+  min-width: 100%;
   display: flex;
   justify-content: space-between;
   z-index: 3;
+  background-color: ${(props) => (props.color === "blue" ? "" : "#f1faff")};
+  color: ${(props) => (props.color === "white" ? "white" : "#3C95FF")};
+  align-items: center;
 `;
 
 const BackButton = styled.div`
   display: flex;
+  margin-left: 20px;
 `;
 
 const Logo = styled.a`
@@ -117,6 +121,7 @@ const Logo = styled.a`
   font-size: 0;
   display: flex;
   justify-content: center;
+  margin-left: 20px;
   img {
     display: block;
     width: 100%;
@@ -147,6 +152,8 @@ const SignOut = styled.div`
   cursor: pointer;
   align-items: center;
   justify-content: center;
+  margin-top: 8px;
+  margin-right: 20px;
   &:hover {
     ${DropDown} {
       opacity: 1;

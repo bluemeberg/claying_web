@@ -27,7 +27,7 @@ const Result2 = (props) => {
 
   const data = props.dnaInfoData.map((item) => {
     return {
-      name: category[item.dna_type],
+      dna: item.dna_type,
       value: item.count,
       category: item.category,
       percentage: item.percentage,
@@ -75,20 +75,33 @@ const Result2 = (props) => {
     if (index === 0 || index === 1 || index === 2) {
       backgroundColor = "yellow"; // 원하는 배경색 설정
     }
-
+    const customLabel = `${category[payload.value]}`;
+    const customLabel2 = `${categoryReal[payload.value]}`;
     return (
       <g transform={`translate(${x},${y})`}>
-        <rect x={-15} y={-5} width={20} height={20} fill={backgroundColor} />
         <text
-          x={100}
-          y={-5}
+          x={0}
+          y={-20}
           dy={16}
           textAnchor="end"
           fill="#666"
           fontSize={12}
-          width={100}
+          fontWeight={900}
+          transform="rotate(-10)"
+          color="black"
         >
-          {payload.value}
+          {customLabel}
+        </text>
+        <text
+          x={0}
+          y={0}
+          dy={16}
+          textAnchor="end"
+          fill="#666"
+          fontSize={10}
+          transform="rotate(-10)"
+        >
+          ({customLabel2})
         </text>
       </g>
     );
@@ -102,6 +115,7 @@ const Result2 = (props) => {
   );
 
   console.log(window.innerHeight);
+
   return (
     <Container>
       <div>
@@ -113,7 +127,7 @@ const Result2 = (props) => {
         <Title>{category[props.topDNAType]}</Title>
         <Tip>총 {totalVideoCount}개의 좋아요한 영상 분석한 결과, %</Tip>
         <div className="col-md-8">
-          <YLabel>
+          {/* <YLabel>
             {data.map((entry, index) => {
               if (index === 0) {
                 return (
@@ -155,27 +169,23 @@ const Result2 = (props) => {
                 );
               }
             })}
-          </YLabel>
+          </YLabel> */}
           <ChartComponent>
-            <BarChart width={300} height={420} data={data9} layout="vertical">
+            <BarChart width={400} height={1000} data={data} layout="vertical">
               <XAxis
                 type="number"
                 dataKey="percentage"
                 interval={0} // 간격을 0으로 설정
                 orientation="top"
                 hide={true}
-                domain={[0, 50]}
+                domain={[0, 40]}
               />
               <YAxis
-                dataKey="name"
+                dataKey="dna"
                 type="category"
-                hide={true}
-                label={{
-                  angle: -90,
-                  position: "insideLeft",
-                  width: 100,
-                }}
+                // hide={true}
                 tick={renderYAxisTick} // 모든 눈금 레이블의 폰트 크기를 12px로 설정
+                width={88}
               />
               <Bar
                 dataKey="percentage"
@@ -190,45 +200,6 @@ const Result2 = (props) => {
                       key={`cell-${index}`}
                       fill={CHART_COLORS[index % 20]}
                     />
-                  </>
-                ))}
-              </Bar>
-            </BarChart>
-            <BarChart
-              width={300}
-              height={400}
-              data={data.slice(8, data.length)}
-              layout="vertical"
-            >
-              <XAxis
-                type="number"
-                dataKey="percentage"
-                interval={0} // 간격을 0으로 설정
-                orientation="top"
-                hide={true}
-                domain={[0, 50]}
-              />
-              <YAxis
-                dataKey="name"
-                type="category"
-                hide={true}
-                label={{
-                  angle: -90,
-                  position: "insideLeft",
-                  width: 100,
-                }}
-                tick={renderYAxisTick} // 모든 눈금 레이블의 폰트 크기를 12px로 설정
-              />
-              <Bar
-                dataKey="percentage"
-                barSize={32}
-                shape={<CustomBarShape />}
-                fill="#8884d8"
-                label={{ position: "right" }}
-              >
-                {data.map((entry, index) => (
-                  <>
-                    <Cell key={`cell-${index}`} fill="F9C8FF" />
                   </>
                 ))}
               </Bar>

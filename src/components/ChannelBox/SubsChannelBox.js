@@ -6,6 +6,7 @@ import { formatDate, getTimeAgo } from "../../utils/timeManipulate";
 import ChannelModal from "../ChannelModal";
 import RecommentResultModal from "../RecommmentResultModal";
 import category from "../../utils/category_real.json";
+import { useNavigate } from "react-router-dom";
 const SubsChannelBox = (props) => {
   console.log(props);
   const [modalOpen, setModalOpen] = useState(false);
@@ -13,7 +14,7 @@ const SubsChannelBox = (props) => {
   const [selectedVideoDataByChannel, setSelectedVideoDataByChannel] =
     useState();
   const [resultModalOpen, setResultModalOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleClick = useCallback(
     (channel) => {
       console.log(channel);
@@ -34,12 +35,48 @@ const SubsChannelBox = (props) => {
           }
         }
       }
-      console.log(result);
-      setSelectedVideoDataByChannel(result);
-      setSelectedChannel(channel);
-      setModalOpen(true);
+      // console.log(result);
+      // if (result !== null) {
+      //   setSelectedVideoDataByChannel(result);
+      // }
+      // setSelectedChannel(channel);
+      // setModalOpen(true);
+      if (channel.subs !== undefined) {
+        navigate(`/result/channel/${channel.channel.id}`, {
+          state: {
+            channelThumbnail: channel.channel.thumbnail,
+            channelID: channel.channel.id,
+            channelDescription: channel.channel.description,
+            channelTitle: channel.channel.title,
+            subsCount: channel.channel.sub_count,
+            subsDate: channel.channel.subsDate,
+            viewCount: channel.viewCount,
+            videoCount: channel.channel.video_count,
+            banner: channel.channel.banner,
+            video: channel.videos,
+            topDNAType: props.topDNAType,
+            top6: "yes",
+          },
+        });
+      } else {
+        navigate(`/result/channel/${channel.channelID}`, {
+          state: {
+            channelThumbnail: channel.channelThumbnail,
+            channelID: channel.channelID,
+            channelDescription: channel.channelDescription,
+            channelTitle: channel.channelTitle,
+            subsCount: channel.subsCount,
+            subsDate: channel.subsDate,
+            viewCount: channel.viewCount,
+            videoCount: channel.videoCount,
+            banner: channel.banner,
+            video: result,
+            topDNAType: props.topDNAType,
+          },
+        });
+      }
     },
-    [props.videoDataByChannel]
+    [navigate, props.topDNAType, props.videoDataByChannel]
   );
   const [detailCategory, setDetailCategory] = useState([]);
   const handleChannelCategory = useCallback(() => {
@@ -67,6 +104,7 @@ const SubsChannelBox = (props) => {
     setDetailCategory(keys);
   }, [props.number, props.subsData.videos]);
   console.log(detailCategory);
+
   useEffect(() => {
     handleChannelCategory();
   }, []);
@@ -75,6 +113,7 @@ const SubsChannelBox = (props) => {
       <SubsChannelContainer
         onClick={() => handleClick(props.subsData)}
         subs={props.subsData.subs}
+        like={props.like}
       >
         <SubsChannelThumbnail>
           <img
@@ -86,15 +125,21 @@ const SubsChannelBox = (props) => {
             alt={props.subsData.channelTitle}
           />
         </SubsChannelThumbnail>
-        {detailCategory.length === 1
-          ? detailCategory.map((data) => (
-              <SubsChannelCategory>{category[data]}</SubsChannelCategory>
-            ))
-          : detailCategory
-              .slice(0, 2)
-              .map((data) => (
-                <SubsChannelCategory>{category[data]}</SubsChannelCategory>
-              ))}
+        {props.like !== false ? (
+          <SubsChannelCategoryBox>
+            {detailCategory.length === 1
+              ? detailCategory.map((data) => (
+                  <SubsChannelCategory>{category[data]}</SubsChannelCategory>
+                ))
+              : detailCategory
+                  .slice(0, 2)
+                  .map((data) => (
+                    <SubsChannelCategory>{category[data]}</SubsChannelCategory>
+                  ))}
+          </SubsChannelCategoryBox>
+        ) : (
+          <></>
+        )}
         <SubsChannelTitle subs={props.subsData.subs}>
           {props.subsData.channel !== undefined
             ? props.subsData.channel.title
@@ -114,6 +159,7 @@ const SubsChannelBox = (props) => {
               : "구독일:" + formatDate(props.subsData.subsDate)}
           </SubsChannelDate>
         )}
+        <RecomendButton onClick={handleClick}>추천하기</RecomendButton>
       </SubsChannelContainer>
       {modalOpen && (
         <ChannelModal
@@ -136,7 +182,7 @@ export default SubsChannelBox;
 const SubsChannelContainer = styled.div`
   display: flex;
   width: 100px;
-  height: 160px;
+  height: ${(props) => (props.like === false ? "160px" : "200px")};
   padding: 8px 0px 12px 0px;
   flex-direction: column;
   align-items: center;
@@ -176,8 +222,6 @@ const SubsChannelCategory = styled.div`
   font-style: normal;
   font-weight: 600;
   line-height: 12px; /* 100% */
-  margin-top: 4px;
-  margin-bottom: 4px;
 `;
 
 const SubsChannelTitle = styled.div`
@@ -213,4 +257,29 @@ const SubsChannelDate = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: 14px; /* 116.667% */
+`;
+
+const RecomendButton = styled.div`
+  width: 63px;
+  height: 23px;
+  flex-shrink: 0;
+  color: #000;
+  font-family: Roboto;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
+  border-radius: 10px;
+  background: var(--Orange, #ffbb54);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+`;
+
+const SubsChannelCategoryBox = styled.div`
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;

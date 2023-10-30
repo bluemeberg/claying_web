@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import AfterRecommendPage from "../pages/HookingPage/AfterRecommendPage";
 import { formatNumber } from "../utils/formatSubsNumber";
@@ -16,7 +17,7 @@ const ChannelModal = (props) => {
   // 인기 영상 존재 여부
   // 클레잉 성향들
   const [modalOpen, setModalOpen] = useState(false);
-
+  const navigate = useNavigate();
   console.log(props);
   const handleCancel = useCallback(() => {
     props.setModalOpen(false);
@@ -25,9 +26,10 @@ const ChannelModal = (props) => {
 
   const handleRecommendClick = useCallback(() => {
     // 추천 데이터 서버 업로드 필요
+    navigate(`/result/${props.selectedChannel.channelID}`, {});
     props.setModalOpen(false);
     props.setResultModalOpen(true);
-  }, [props]);
+  }, [navigate, props]);
 
   const tempImages = {
     "Business/Entrepreneurship": "/images/character/temp/business.svg",
@@ -55,6 +57,8 @@ const ChannelModal = (props) => {
           <ModalChannelBanner>
             {props.selectedChannel.banner !== undefined ? (
               <img src={props.selectedChannel.banner} alt="modal-img" />
+            ) : props.selectedChannel.banner === undefined ? (
+              <img src="/images/DefaultBanner.svg" alt="banner-default" />
             ) : (
               <img src={props.selectedChannel.channel.banner} alt="modal-img" />
             )}

@@ -1,6 +1,8 @@
 import React from "react";
 import { styled } from "styled-components";
 import { getTimeAgo } from "../../utils/timeManipulate";
+import category from "../../utils/category_real.json";
+
 const UnknownVideoBox = (props) => {
   console.log(props);
   // 영상 카테고리
@@ -10,11 +12,11 @@ const UnknownVideoBox = (props) => {
   // top100 선정된 날짜
   return (
     <VideoContainer>
-      <VideoCategory>{props.hotVideo.detail_category}</VideoCategory>
+      <VideoCategory>{category[props.hotVideo.detail_category]}</VideoCategory>
       <VideoThumbnail>
         <iframe
-          width="300"
-          height="168.75"
+          width="95%"
+          height="200px"
           src={`https://www.youtube.com/embed/${props.hotVideo.id}`}
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -39,6 +41,7 @@ export default UnknownVideoBox;
 const VideoContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 const VideoCategory = styled.div`
@@ -55,9 +58,11 @@ const VideoCategory = styled.div`
 `;
 
 const VideoThumbnail = styled.div`
-  margin-right: 12px;
-  margin-left: 12px;
   margin-top: 8px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
   img {
     border-radius: 12px;
   }

@@ -3,18 +3,23 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import {
+  A11y,
+  Controller,
+  Navigation,
+  Pagination,
+  Scrollbar,
+  Thumbs,
+} from "swiper/modules";
 import FindChannelCategory from "./FindChannelCategory";
 import "./FindPage.css";
 const FindPage = () => {
   const location = useLocation();
   console.log(location.state);
-
-  console.log(location.state.unknownResult.found_dnas);
-
+  console.log(location.state.unknownResult);
   // 데이터 배열을 순회하면서 채널 ID를 기준으로 비디오 데이터를 모읍니다.
   const resultUnknownResult = [];
-  location.state.unknownResult.found_dnas.forEach((item) => {
+  location.state.unknownResult.forEach((item) => {
     console.log(item.found_videos);
     const result = [];
     item.found_videos.forEach((item) => {
@@ -160,7 +165,6 @@ const FindPage = () => {
     },
     [customSortVideo]
   );
-
   const userCustomSort = useCallback(
     (a, b) => {
       a.users.sort(usersCustomSortVideo);
@@ -198,6 +202,7 @@ const FindPage = () => {
   // 4. 같은 구독자 수 섹션(ex, +50만)에 최우선순위 발견 채널 후보군(ex, 유저 성향에 해당하는 영상 2개)이 여러개일 경우
   // 해당 영상 최신 순으로 채널 발견
   // 5. 영상 인기 급상승 날짜까지 같은 경우 전일 대비 성장률(구독자 수 + 조회수 증감율)이 우수한 채널 발견
+  const [count, setCount] = useState(0);
   return (
     <Container>
       <NavBar back={true} />
@@ -212,11 +217,13 @@ const FindPage = () => {
           nextEl: ".next",
           prevEl: ".prev",
         }}
-        modules={[Navigation]}
+        modules={[Navigation, Pagination, Scrollbar, A11y, Controller]}
         className="mySwiper"
         allowTouchMove={false} // 스와이프 기능 끄기
         slidesPerView={1}
         spaceBetween={20}
+        onSlideChange={(index) => setCount(index.realIndex)}
+        scrollbar={{ draggable: true }}
       >
         {resultUnknownResult.slice(0, 4).map((data, index) => (
           <SwiperSlide>
@@ -224,6 +231,10 @@ const FindPage = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+      <GoToAppButton>
+        앱 다운받고 {resultUnknownResult[count].found_videos.length}개 채널 더
+        발견하기
+      </GoToAppButton>
     </Container>
   );
 };
@@ -239,4 +250,25 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #f1faff;
+`;
+const GoToAppButton = styled.div`
+  display: flex;
+  width: 312px;
+  height: 52px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background: #3c95ff;
+  color: white;
+`;
+
+const Title = styled.div`
+  color: #000;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 100% */
+  margin-top: 80px;
 `;

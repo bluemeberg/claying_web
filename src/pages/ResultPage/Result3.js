@@ -51,6 +51,7 @@ const Result3 = (props) => {
             setModalOpen={props.setModalOpen}
             videoDataByChannel={props.videoDataByChannel}
             topDNAType={props.topDNAType}
+            like={false}
           />
         ))}
       </SubsContainer>
@@ -89,8 +90,7 @@ const VideoContainer = styled.div`
 `;
 
 const SubsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  display: flex;
   overflow-x: auto; /* 가로 스크롤을 활성화합니다. */
   width: 100%; /* 가로 스크롤이 나타나도록 부모 요소의 너비를 조절합니다. */
 `;

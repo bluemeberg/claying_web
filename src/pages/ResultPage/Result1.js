@@ -38,6 +38,9 @@ const Result1 = (props) => {
 
   return (
     <Container>
+      <Tip>
+        내가 좋아하는<br></br> 크리에이터 보러가기
+      </Tip>
       <SubTitle>{props.userInfo}님이 크리에이터가 된다면 </SubTitle>
       <SubTitle type="rank">1st</SubTitle>
       {/* <Title region="en">{props.topDNAType}</Title> */}
@@ -60,6 +63,19 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #f1faff;
+`;
+
+const Tip = styled.div`
+  display: flex;
+  position: absolute;
+  top: 112px;
+  right: 0px;
+  text-align: end;
+  font-size: 8px;
+  background-color: #ffbb54;
+  padding: 8px;
+  border-radius: 10px;
+  font-weight: 700;
 `;
 
 const Banner = styled.div`

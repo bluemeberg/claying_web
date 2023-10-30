@@ -49,9 +49,9 @@ const CompletionPage = () => {
   const handleButtonClick = useCallback(() => {
     navigate("/result", { state: location.state });
   }, [location.state, navigate]);
-
   const [currentCategory, setCurrentCategory] = useState("Drama Movies");
   const [currentImage, setCurrentImage] = useState(tempImages[currentCategory]);
+
   useEffect(() => {
     if (location.state === null) {
       navigate("/login", {});
@@ -74,7 +74,7 @@ const CompletionPage = () => {
   }, [currentCategory]);
   return (
     <Container>
-      <NavBar color="white" />
+      <NavBar color="blue" />
       <SubTitle>분석을 완료했어요!</SubTitle>
       <Title>
         내가 유튜버라면<br></br> 어떤 크리에이터일까?

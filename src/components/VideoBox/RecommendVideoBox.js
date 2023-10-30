@@ -1,36 +1,33 @@
 import React from "react";
 import { styled } from "styled-components";
-import { formatNumber } from "../../utils/formatSubsNumber";
-import { getTimeAgo } from "../../utils/timeManipulate";
 import category from "../../utils/category_real.json";
+import { getTimeAgo } from "../../utils/timeManipulate";
 
-const VideoBoxNonModal = (props) => {
+const RecommendVideoBox = (props) => {
   console.log(props);
   return (
     <VideoBoxContainer>
       <VideoCategory>
         {category[props.likedVideo.detail_category]}
       </VideoCategory>
-      <VideoThumbnail>
-        <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
-      </VideoThumbnail>
-      <ChannelBox>
-        <ChannelInfo>
-          <VideoTitle>
-            {props.likedVideo.title.length > 20
-              ? props.likedVideo.title.slice(0, 20) + "..."
-              : props.likedVideo.title}
-          </VideoTitle>
-          <ChannelTitle>
-            {getTimeAgo(props.likedVideo.upload_date)}
-          </ChannelTitle>
-        </ChannelInfo>
-      </ChannelBox>
+      <VideoContentBox>
+        <VideoThumbnail>
+          <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
+        </VideoThumbnail>
+        <ChannelBox>
+          <ChannelInfo>
+            <VideoTitle>{props.likedVideo.title}</VideoTitle>
+            <ChannelTitle>
+              {getTimeAgo(props.likedVideo.upload_date)}
+            </ChannelTitle>
+          </ChannelInfo>
+        </ChannelBox>
+      </VideoContentBox>
     </VideoBoxContainer>
   );
 };
 
-export default VideoBoxNonModal;
+export default RecommendVideoBox;
 
 const VideoBoxContainer = styled.div`
   display: flex;
@@ -46,6 +43,7 @@ const VideoThumbnail = styled.div`
   height: 84px;
   margin-bottom: 10px;
   border-radius: 10px;
+  margin-right: 20px;
   img {
     width: 150px;
     height: 84px;
@@ -53,14 +51,19 @@ const VideoThumbnail = styled.div`
   }
 `;
 
+const VideoContentBox = styled.div`
+  display: flex;
+`;
+
 const VideoTitle = styled.div`
   color: #000;
   font-family: Pretendard;
-  font-size: 11px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 16px; /* 100% */
+  line-height: 20px; /* 100% */
   text-align: start;
+  margin-bottom: 8px;
 `;
 
 const ChannelBox = styled.div`

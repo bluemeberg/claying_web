@@ -38,7 +38,7 @@ const LoginPage = () => {
   };
   return (
     <Container>
-      <NavBar color="white" />
+      <NavBar color="blue" />
       <SubContainer>
         <Title>
           잠깐! <br></br> 접근을 허용해주세요.

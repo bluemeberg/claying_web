@@ -4,6 +4,7 @@ import { getTimeAgo } from "../../utils/timeManipulate";
 import ChannelModal from "../ChannelModal";
 import category from "../../utils/category_real.json";
 import RecommentResultModal from "../RecommmentResultModal";
+import { useNavigate } from "react-router-dom";
 
 const VideoBox = (props) => {
   console.log(props.likedVideo);
@@ -13,7 +14,7 @@ const VideoBox = (props) => {
   const [selectedVideoDataByChannel, setSelectedVideoDataByChannel] =
     useState();
   const [resultModalOpen, setResultModalOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleClick = useCallback(
     (channel) => {
       setModalOpen(true);
@@ -29,10 +30,16 @@ const VideoBox = (props) => {
         }
       }
       console.log(result);
-      setSelectedVideoDataByChannel(result);
-      setSelectedChannel(channel);
+      // setSelectedVideoDataByChannel(result);
+      // setSelectedChannel(channel);
+
+      navigate(`/result/video/${channel.video.id}`, {
+        state: {
+          video: channel,
+        },
+      });
     },
-    [props.videoDataByChannel]
+    [navigate, props.videoDataByChannel]
   );
   console.log(modalOpen);
   console.log(selectedVideoDataByChannel);
@@ -40,31 +47,34 @@ const VideoBox = (props) => {
     <div>
       <VideoBoxContainer onClick={() => handleClick(props.likedVideo)}>
         <VideoCategory>
-          {props.likedVideo.detail_category !== "string" ? (
-            category[props.likedVideo.video.detail_category]
-          ) : (
-            <></>
-          )}
+          {category[props.likedVideo.video.detail_category]}
         </VideoCategory>
         <VideoThumbnail>
-          <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
+          <img
+            src={props.likedVideo.video.thumbnail}
+            alt={props.likedVideo.video.id}
+          />
         </VideoThumbnail>
         <ChannelBox>
           <ChannelThumbnail>
-            <img src={props.likedVideo.thumbnail} alt={props.likedVideo.id} />
+            <img
+              src={props.likedVideo.channel.thumbnail}
+              alt={props.likedVideo.channel.id}
+            />
           </ChannelThumbnail>
           <ChannelInfo>
             <VideoTitle>
-              {props.likedVideo.title.length > 15
-                ? props.likedVideo.title.slice(0, 13) + "..."
-                : props.likedVideo.title}
+              {props.likedVideo.video.title.length > 15
+                ? props.likedVideo.video.title.slice(0, 13) + "..."
+                : props.likedVideo.video.title}
             </VideoTitle>
             <ChannelTitle>
-              {props.likedVideo.title} *{" "}
-              {getTimeAgo(props.likedVideo.upload_date)}
+              {props.likedVideo.channel.title} *{" "}
+              {getTimeAgo(props.likedVideo.video.upload_date)}
             </ChannelTitle>
           </ChannelInfo>
         </ChannelBox>
+        <RecommendButton>추천하기</RecommendButton>
       </VideoBoxContainer>
       {modalOpen && (
         <ChannelModal
@@ -89,6 +99,7 @@ const VideoBoxContainer = styled.div`
   justify-content: flex-start;
   margin-bottom: 12px;
   margin-top: 24px;
+  align-items: center;
 `;
 
 const VideoThumbnail = styled.div`
@@ -155,4 +166,23 @@ const VideoCategory = styled.div`
   margin-top: -10px;
   display: flex;
   margin-bottom: 4px;
+`;
+
+const RecommendButton = styled.div`
+  width: 132px;
+  height: 29px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: var(--Orange, #ffbb54);
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Roboto;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 12px; /* 100% */
+  letter-spacing: -0.24px;
+  margin-top: 8px;
 `;

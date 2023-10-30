@@ -163,9 +163,9 @@ const FindChannelCategory = (props) => {
           />
         ))}
       </SubsContainer>
-      <GoToAppButton>
+      {/* <GoToAppButton>
         앱 다운받고 {props.unknown.found_videos.length}개 채널 더 발견하기
-      </GoToAppButton>
+      </GoToAppButton> */}
     </Container>
   );
 };
@@ -181,6 +181,7 @@ const Container = styled.div`
   align-items: center;
   background-color: #f1faff;
   overflow-y: scroll;
+  justify-content: center;
 `;
 
 const CategoryTitle = styled.div`
@@ -192,7 +193,7 @@ const CategoryTitle = styled.div`
   color: #fff;
   text-align: center;
   font-family: Pretendard;
-  font-size: 16px;
+  font-size: 20px;
   font-style: normal;
   font-weight: 700;
   line-height: 14px; /* 100% */
@@ -208,11 +209,12 @@ const Title = styled.div`
   color: #000;
   text-align: center;
   font-family: Pretendard;
-  font-size: 24px;
+  font-size: 20px;
   font-style: normal;
   font-weight: 600;
   line-height: 24px; /* 100% */
   margin-top: 80px;
+  margin-bottom: 40px;
 `;
 
 const SubsContainer = styled.div`

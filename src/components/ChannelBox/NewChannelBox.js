@@ -4,12 +4,19 @@ import { youtubeDataAPIInstacne, youtubeGeneralAPI } from "../../api/axios";
 import ChannelModal from "../ChannelModal";
 import UnknownChannelModal from "../UnknownChannelModal";
 import category from "../../utils/category_real.json";
+import { useNavigate } from "react-router-dom";
 const NewChannelBox = (props) => {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState();
   const handleClick = useCallback((channel) => {
-    setModalOpen(true);
-    setSelectedChannel(channel);
+    navigate(`/find/${props.props.channel.id}`, {
+      state: {
+        props,
+      },
+    });
+    // setModalOpen(true);
+    // setSelectedChannel(channel);
   }, []);
   const handleGetChannelInfo = useCallback(async () => {
     const response = await youtubeDataAPIInstacne.get("/channels", {

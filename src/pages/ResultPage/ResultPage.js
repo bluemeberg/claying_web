@@ -269,13 +269,25 @@ const ResultPage = () => {
               nextEl: ".next",
               prevEl: ".prev",
             }}
-            modules={[Navigation]}
+            modules={[
+              Navigation,
+              Pagination,
+              Scrollbar,
+              A11y,
+              Controller,
+              Thumbs,
+            ]}
             className="mySwiper"
             allowTouchMove={false} // 스와이프 기능 끄기
             slidesPerView={1}
             spaceBetween={20}
+            onSlideChange={(index) => console.log(index)}
+            scrollbar={{ draggable: true }}
           >
             <SwiperSlide>
+              {({ isActive }) => (
+                <div>Current slide is {isActive ? "active" : "not active"}</div>
+              )}
               <Result1
                 dnaInfoData={unknownResult}
                 dnaMaxCountInfo={maxPercentageItems}
@@ -295,7 +307,7 @@ const ResultPage = () => {
             <SwiperSlide>
               <Result3
                 setModalOpen={setModalOpen}
-                likedVideos={data}
+                likedVideos={addCountLikedVideos}
                 userInfo={userInfo.displayName}
                 topDNAType={rankedArray[0].dna_type}
                 subsData={subsData}
@@ -343,7 +355,6 @@ const ResultPage = () => {
 export default ResultPage;
 
 const Container = styled.div`
-  position: fixed;
   min-height: 100vh;
   min-width: 100vw;
   overflow-x: hidden;

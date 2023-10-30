@@ -74,7 +74,9 @@ const NewChannelBox = (props) => {
           />
         </NewChannelThumbanil>
         {props.index + 1 === props.length ? (
-          <NewChannelBlur> </NewChannelBlur>
+          <NewChannelBlur>
+            <img src="/images/UnknownBlur.svg" alt="unknwonblut" />
+          </NewChannelBlur>
         ) : (
           <></>
         )}
@@ -155,8 +157,6 @@ const NewChannelThumbanil = styled.div`
 const NewChannelBlur = styled.div`
   width: 72px;
   height: 72px;
-  fill: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
   position: absolute;
   border-radius: 36px;
   margin-bottom: 24px;

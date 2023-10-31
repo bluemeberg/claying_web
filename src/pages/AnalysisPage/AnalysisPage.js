@@ -60,9 +60,13 @@ const AnalysisPage = () => {
       <AnalysisCount>{result.progressValue.toFixed(2)} %</AnalysisCount>
       <ProgressBar value={result.progressValue} max={100} />
       {result.progressValue === 100 ? (
-        <Caution>
-          분석 결과를 불러오고 있습니다. <br></br>잠시만 기다려주세요.
-        </Caution>
+        <>
+          <Loading>
+            <img src="/images/loading.gif" alt="loading" width={60} />
+            분석 결과를 불러오고 있습니다. <br></br>잠시만 기다려주세요.
+          </Loading>
+          <Caution></Caution>
+        </>
       ) : (
         <Caution>
           최대 1분 소요. 잠시 기다려주세요!<br></br> <br></br>GPT 기반의 분석
@@ -117,6 +121,12 @@ const CountInfo = styled.div`
   line-height: 20px; /* 100% */
   margin-top: 20px;
   margin-bottom: 20px;
+`;
+
+const Loading = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const DNAType = styled.div`

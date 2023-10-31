@@ -503,31 +503,28 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       userInfo = JSON.parse(userInfo);
       console.log(userInfo);
       console.log(timeoutFlag);
-      if (timeoutFlag === false) {
-        const foundResult = await serverInstance.post("/dna/find", {
-          user_dnas: {
-            email: userInfo.email,
-            dnas: resultArray,
-          },
-          subscribe_channel_ids: uniqueUserChannelIDs,
-        });
-        console.log(foundResult);
-        for (let i = 0; i < resultArray.length; i++) {
-          dnaTypeNames = [...dnaTypeNames, resultArray[i].value];
-        }
-        console.log(dnaTypeNames);
-        dnaTypeNames = dnaTypeNames.join(",");
-        uniqueUserChannelIDs = uniqueUserChannelIDs.join(",");
-        console.log(uniqueUserChannelIDs);
-        console.log(dnaTypeNames);
-        return {
-          userChannelIDs: uniqueUserChannelIDs,
-          dnaTypeNames: dnaTypeNames,
-          dnaTypeCollections: resultArray,
-          foundChannel: foundResult,
-        };
-      } else {
+      const foundResult = await serverInstance.post("/dna/find", {
+        user_dnas: {
+          email: userInfo.email,
+          dnas: resultArray,
+        },
+        subscribe_channel_ids: uniqueUserChannelIDs,
+      });
+      console.log(foundResult);
+      for (let i = 0; i < resultArray.length; i++) {
+        dnaTypeNames = [...dnaTypeNames, resultArray[i].value];
       }
+      console.log(dnaTypeNames);
+      dnaTypeNames = dnaTypeNames.join(",");
+      uniqueUserChannelIDs = uniqueUserChannelIDs.join(",");
+      console.log(uniqueUserChannelIDs);
+      console.log(dnaTypeNames);
+      return {
+        userChannelIDs: uniqueUserChannelIDs,
+        dnaTypeNames: dnaTypeNames,
+        dnaTypeCollections: resultArray,
+        foundChannel: foundResult,
+      };
     },
     []
   );

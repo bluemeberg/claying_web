@@ -1,5 +1,5 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { serverInstance } from "../../api/axios";
@@ -10,8 +10,11 @@ const LoginPage = () => {
   const provider = new GoogleAuthProvider();
   provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
   const navigate = useNavigate();
+  const [user, setUser] = useState();
   const handleAuth = async () => {
     const result = await signInWithPopup(auth, provider);
+    console.log(result);
+    setUser(result);
     localStorage.setItem("userData", JSON.stringify(result.user));
     // user email post
     const postResult = await serverInstance.post("/users/", {
@@ -52,9 +55,16 @@ const LoginPage = () => {
           단, 본 테스트에서는 유저 식별이 가능한 형태로<br></br>유튜브 활동
           데이터를 저장하지 않습니다.
         </SubTitle>
-        <GoogleButton onClick={handleAuth}>
-          <img src="/images/Google.svg" alt="google" /> Google 계정으로 시작하기
-        </GoogleButton>
+        {user === undefined ? (
+          <GoogleButton onClick={handleAuth}>
+            <img src="/images/Google.svg" alt="google" /> Google 계정으로
+            시작하기
+          </GoogleButton>
+        ) : (
+          <Loading>
+            <img src="/images/loading.gif" alt="loading" width={60} />
+          </Loading>
+        )}
       </SubContainer>
     </Container>
   );
@@ -123,4 +133,10 @@ const GoogleButton = styled.div`
     width: 28px;
     height: 28px;
   }
+`;
+
+const Loading = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

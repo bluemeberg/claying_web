@@ -203,6 +203,13 @@ const FindPage = () => {
   // 해당 영상 최신 순으로 채널 발견
   // 5. 영상 인기 급상승 날짜까지 같은 경우 전일 대비 성장률(구독자 수 + 조회수 증감율)이 우수한 채널 발견
   const [count, setCount] = useState(0);
+  const navigate = useNavigate();
+  const handleClick = useCallback(
+    (count, type) => {
+      navigate("/app/channel", { state: { count, type } });
+    },
+    [navigate]
+  );
   return (
     <Container>
       <NavBar back={true} />
@@ -231,7 +238,14 @@ const FindPage = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <GoToAppButton>
+      <GoToAppButton
+        onClick={() =>
+          handleClick(
+            resultUnknownResult[count].found_videos.length,
+            resultUnknownResult[count].dna_type
+          )
+        }
+      >
         앱 다운받고 {resultUnknownResult[count].found_videos.length}개 채널 더
         발견하기
       </GoToAppButton>
@@ -251,6 +265,7 @@ const Container = styled.div`
   align-items: center;
   background-color: #f1faff;
 `;
+
 const GoToAppButton = styled.div`
   display: flex;
   width: 312px;

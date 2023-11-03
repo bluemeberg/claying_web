@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
@@ -6,6 +6,7 @@ import StarRating from "../../components/StarRating";
 import VideoBoxNonModal from "../../components/VideoBox/VideoBoxNonModal";
 import { formatNumber } from "../../utils/formatSubsNumber";
 import category from "../../utils/category_compare.json";
+import RecommentResultModal from "../../components/RecommmentResultModal";
 
 const RecommendChannel = () => {
   const location = useLocation();
@@ -18,7 +19,11 @@ const RecommendChannel = () => {
     width: 100%;
     background-image: url(${location.state.banner});
   `;
-  const handleRecommendClick = useCallback(() => {}, []);
+  const [resultModalOpen, setResultModalOpen] = useState(false);
+
+  const handleRecommendClick = useCallback(() => {
+    setResultModalOpen(true);
+  }, []);
   const tempImages = {
     "Business/Entrepreneurship": "/images/character/temp/business.svg",
     Sports: "/images/character/temp/soccer.svg",
@@ -37,6 +42,7 @@ const RecommendChannel = () => {
     "Sci-Fi/Fantasy Movies": "/images/character/temp/movie.svg",
     // 다른 특성과 이미지 경로도 추가
   };
+
   return (
     <Container>
       <NavBar back={true} />
@@ -125,6 +131,9 @@ const RecommendChannel = () => {
                 ></VideoBoxNonModal>
               ))}
         </VideoContainer>
+      )}
+      {resultModalOpen && (
+        <RecommentResultModal setResultModalOpen={setResultModalOpen} />
       )}
     </Container>
   );

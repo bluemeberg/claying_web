@@ -9,6 +9,8 @@ import ResultPage from "./pages/ResultPage/ResultPage";
 import RecommendChannel from "./pages/ResultPage/RecommendChannel";
 import RecommendVideo from "./pages/ResultPage/RecommendVideo";
 import FindChannel from "./pages/FindPage/FindChannel";
+import AfterRecommendPage from "./pages/HookingPage/AfterRecommendPage";
+import AfterUserRecommendPage from "./pages/HookingPage/AfterUserRecommendPage";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
       <Route path="/result/video/:videoId" element={<RecommendVideo />} />
       <Route path="/find" element={<FindPage />} />
       <Route path="/find/:channelId" element={<FindChannel />} />
+      <Route path="/app/channel" element={<AfterRecommendPage />} />
+      <Route path="/app/user" element={<AfterUserRecommendPage />} />
     </Routes>
   );
 }

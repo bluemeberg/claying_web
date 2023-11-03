@@ -34,7 +34,7 @@ const NavBar = (props) => {
   };
   const handleGoBack = useCallback(() => {
     navigate(-1);
-  }, [navigate]);
+  }, []);
 
   const handleGoHome = useCallback(() => {
     navigate("/");

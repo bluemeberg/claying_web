@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
 import UnknownVideoBox from "../../components/VideoBox/UnknownVideoBox";
@@ -9,6 +9,7 @@ import { formatNumber } from "../../utils/formatSubsNumber";
 const FindChannel = () => {
   const location = useLocation();
   console.log(location);
+  const navigate = useNavigate();
   const ModalChannelBanner = styled.div`
     margin-top: -40px;
     height: 200px;
@@ -18,6 +19,8 @@ const FindChannel = () => {
   const handleRecommendClick = useCallback(() => {
     // 추천 데이터 서버 업로드 필요
     // 앱 다운로드 페이지로 이동
+
+    navigate("/app/user");
   }, []);
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggleContent = useCallback(() => {
@@ -81,11 +84,14 @@ const FindChannel = () => {
             {formatNumber(props.selectedChannel.viewCount)}회 */}
       </ChannelVideoCount>
       {location.state.props.props.users.length !== 0 ? (
-        <ChannelRecommendButton users="true" onClick={handleRecommendClick}>
+        <ChannelRecommendButton
+          users="true"
+          onClick={() => handleRecommendClick("users")}
+        >
           좋아하는 클레잉 유저들 확인하기
         </ChannelRecommendButton>
       ) : (
-        <ChannelRecommendButton onClick={handleRecommendClick}>
+        <ChannelRecommendButton onClick={() => handleRecommendClick()}>
           관련 크리에이터 더 발견하기
         </ChannelRecommendButton>
       )}

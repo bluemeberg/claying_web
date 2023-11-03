@@ -35,15 +35,19 @@ const RecommentResultModal = (props) => {
               되었습니다.
             </Comment>
             <Title>
-              클레잉 앱에서 <span>주변 친구</span>들이{" "}
+              클레잉 앱에서 <span>주변 친구</span>들이<br></br>
               <span>좋아하는 채널</span> 리뷰도 같이 확인해보세요!
             </Title>
             <Banner>
               <img src="/images/MobileMockup.svg" alt="resultMobile" />
             </Banner>
             <SubTitle>Creative 한 Playing, 클레잉</SubTitle>
-            <GoogleStoreButton>Play Store에서 다운로드</GoogleStoreButton>
-            <AppleStoreButton>App Store에서 다운로드</AppleStoreButton>
+            <GoogleStoreButton>
+              <img src="/images/PlayStoreButton.svg" alt="playstore" />
+            </GoogleStoreButton>
+            <AppleStoreButton>
+              <img src="/images/AppStoreButton.svg" alt="appstore" />
+            </AppleStoreButton>
           </Container>
         </div>
       </div>
@@ -64,31 +68,59 @@ const Container = styled.main`
   background-color: #f1faff;
 `;
 
-const Comment = styled.div``;
+const Comment = styled.div`
+  color: #000;
+  font-family: NanumGothic;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 32px; /* 266.667% */
+  letter-spacing: -0.24px;
+  text-align: flex-start;
+  width: 100%;
+  margin-top: 40px;
+  margin-bottom: 40px;
+`;
 
-const Title = styled.div``;
+const Title = styled.div`
+  color: #000;
+  font-family: NanumGothic;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 32px; /* 177.778% */
+  letter-spacing: -0.36px;
+  margin-bottom: 32px;
+  span {
+    color: var(--_brand-sub, #429df2);
+    font-family: NanumGothic;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 32px;
+    letter-spacing: -0.36px;
+  }
+`;
 
 const Banner = styled.div`
   img {
   }
 `;
-const SubTitle = styled.div``;
+const SubTitle = styled.div`
+  color: #000;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 20px; /* 142.857% */
+  margin-bottom: 40px;
+`;
 const GoogleStoreButton = styled.div`
   display: flex;
-  padding: 14px 75px 14px 14px;
-  align-items: center;
-  gap: 37px;
-  border-radius: 8px;
-  border: 1px solid #d9d9d9;
-  background: #fff;
+  margin-bottom: 20px;
 `;
 
 const AppleStoreButton = styled.div`
   display: flex;
-  padding: 14px 75px 14px 14px;
-  align-items: center;
-  gap: 38px;
-  border-radius: 8px;
-  background: #000;
-  color: white;
 `;

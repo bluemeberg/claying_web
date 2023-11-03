@@ -1,20 +1,14 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
 import NavBar from "../../components/NavBar";
-import categoryReal from "../../utils/category_real.json";
 
-const AfterRecommendPage = () => {
-  console.log("hi");
-  const location = useLocation();
-  console.log(location.state);
+const AfterUserRecommendPage = () => {
   return (
     <Container>
       <NavBar back={true} />
       <Comment>클레잉 앱 다운받고</Comment>
       <Title>
-        {categoryReal[location.state.type]} <br></br>
-        {location.state.count}개 채널 <br></br> 발견하러가기
+        클레잉 유저 <br></br> 발견하러가기
       </Title>
       <Banner>
         <img src="/images/MobileMockup.svg" alt="resultMobile" />
@@ -30,7 +24,7 @@ const AfterRecommendPage = () => {
   );
 };
 
-export default AfterRecommendPage;
+export default AfterUserRecommendPage;
 
 const Container = styled.main`
   position: relative;

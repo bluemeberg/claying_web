@@ -41,6 +41,7 @@ const SubsChannelBox = (props) => {
       // }
       // setSelectedChannel(channel);
       // setModalOpen(true);
+
       if (channel.subs !== undefined) {
         navigate(`/result/channel/${channel.channel.id}`, {
           state: {
@@ -159,7 +160,9 @@ const SubsChannelBox = (props) => {
               : "구독일:" + formatDate(props.subsData.subsDate)}
           </SubsChannelDate>
         )}
-        <RecomendButton onClick={handleClick}>추천하기</RecomendButton>
+        <RecomendButton onClick={() => handleClick(props.subsData)}>
+          추천하기
+        </RecomendButton>
       </SubsChannelContainer>
       {modalOpen && (
         <ChannelModal

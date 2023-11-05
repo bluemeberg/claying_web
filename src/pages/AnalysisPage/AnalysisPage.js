@@ -6,7 +6,16 @@ import NavBar from "../../components/NavBar";
 import ProgressBar from "../../components/ProgressBar";
 import { useDNAAnalysisData } from "../../hooks/useDNAAnalysisData";
 import { useYoutubeAnalysisData } from "../../hooks/useYoutubeAnalysisData";
-import { AnalysisCount, Button, Caution } from "./AnalysisPageComponent";
+import {
+  AnalysisCount,
+  Button,
+  Caution,
+  ResultLogBox,
+  ResultLogBoxContainer,
+  ResultLogCategory,
+  ResultLogThumbnail,
+  ResultLogTitle,
+} from "./AnalysisPageComponent";
 import category from "../../utils/category_real.json";
 const AnalysisPage = () => {
   const location = useLocation();
@@ -14,6 +23,7 @@ const AnalysisPage = () => {
   const navigate = useNavigate();
   let [token, setToken] = useState("");
   let [email, setEmail] = useState("");
+
   if (location.state !== null) {
     email = location.state.email;
     token = location.state.token;
@@ -69,14 +79,31 @@ const AnalysisPage = () => {
         </>
       ) : (
         <Caution>
-          최대 1분 소요. 잠시 기다려주세요!<br></br> <br></br>GPT 기반의 분석
-          지연 시 다시 시작하기 버튼이 활성화됩니다!
-          <br></br> (버튼 클릭 시 이전 분석된 영상은 결과를 불러오고 <br></br>
-          지연된 영상 부터 다시 분석됩니다.)
+          OpenAI GPT 3.5 기반의 클레잉 알고리즘을 통해 <br></br> 해당 영상의
+          카테고리를 분석하고 있습니다.<br></br>
+          (최대 1~2분 정도 소요되며 분석 지연 시 다시 시작히기 버튼이 활성화
+          되고, 지연 된 영상 부터 재 시작됩니다.)
         </Caution>
       )}
-
       {/* 언노운 채널 불러오는 로딩 바 */}
+      {/* 분석 로그 for 유저 인터랙션 */}
+      <ResultLogBoxContainer>
+        {result.totalAnalysistResult.map((data) => {
+          return (
+            <ResultLogBox>
+              <ResultLogThumbnail>
+                <img src={data.video.thumbnail} alt="resultImg" />
+              </ResultLogThumbnail>
+              <ResultLogTitle>
+                {data.video.title.slice(0, 20)}...
+              </ResultLogTitle>
+              <ResultLogCategory>
+                {category[data.video.detail_category]}
+              </ResultLogCategory>
+            </ResultLogBox>
+          );
+        })}
+      </ResultLogBoxContainer>
       {result.timeoutFlag === true ? (
         <Button flag="true" onClick={handleRestart}>
           다시 시작하기
@@ -105,7 +132,7 @@ const Title = styled.div`
   color: #000;
   text-align: center;
   font-family: Pretendard;
-  font-size: 3.4vh;
+  font-size: 3vh;
   font-style: normal;
   font-weight: 600;
   line-height: 24px; /* 100% */
@@ -115,7 +142,7 @@ const Title = styled.div`
 const CountInfo = styled.div`
   color: #000;
   font-family: Pretendard;
-  font-size: 2vh;
+  font-size: 1.8vh;
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 100% */

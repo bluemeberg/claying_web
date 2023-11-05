@@ -356,6 +356,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
           setVideoDNA(result.data.video.detail_category);
           videoData[i].detail_category = result.data.video.detail_category;
           console.log(videoData);
+          setTotalAnalysistResult(batches);
         } catch (error) {
           if (error.message === "요청 시간 초과") {
             setTimeoutFlag(true);
@@ -635,6 +636,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
     },
     []
   );
+
   const handleAnalysisResult = useCallback(
     async (video, channel, batch) => {
       console.log(longLikedVideoData);
@@ -644,6 +646,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       const { videoAnalysisResult, videoCount } =
         await handleLikedVideoProcessBatch(videoData, batch);
       console.log(videoAnalysisResult);
+      setTotalAnalysistResult(videoAnalysisResult);
       console.log(videoCount);
       // for (let i = 0; i < videoData.length; i++) {
       //   videoData[i].dnatype = videoAnalysisResult[i].dna[0].dnatype;

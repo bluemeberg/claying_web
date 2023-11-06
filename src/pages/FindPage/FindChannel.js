@@ -19,7 +19,7 @@ const FindChannel = () => {
   const handleRecommendClick = useCallback(() => {
     // 추천 데이터 서버 업로드 필요
     // 앱 다운로드 페이지로 이동
-
+    
     navigate("/app/user");
   }, []);
   const [isExpanded, setIsExpanded] = useState(false);

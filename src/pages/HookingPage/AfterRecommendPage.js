@@ -16,7 +16,7 @@ const AfterRecommendPage = () => {
         {categoryReal[location.state.type]} <br></br>
         {location.state.count}개 채널 <br></br> 발견하러가기
       </Title>
-      <Banner>
+      <Banner ㄹㅁ>
         <img src="/images/MobileMockup.svg" alt="resultMobile" />
       </Banner>
       <SubTitle>Creative 한 Playing, 클레잉</SubTitle>

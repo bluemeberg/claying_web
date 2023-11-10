@@ -53,7 +53,8 @@ const LoginPage = () => {
         </SubTitle>
         <SubTitle kind="caution">
           단, 본 테스트에서는 유저 식별이 가능한 형태로<br></br>유튜브 활동
-          데이터를 저장하지 않습니다.
+          데이터를 저장하지 않고, <br></br> 유저 동의 없이 일체 공유되지
+          않습니다.
         </SubTitle>
         {user === undefined ? (
           <GoogleButton onClick={handleAuth}>

@@ -102,19 +102,20 @@ const MainPage = () => {
   const [currentCategory, setCurrentCategory] = useState("Drama Movies");
   const [currentImage, setCurrentImage] = useState(tempImages[currentCategory]);
   const [fadeOut, setFadeOut] = useState(false);
+
   useEffect(() => {
     // 주기적으로 이미지를 변경하는 함수
     const changeImage = () => {
-      setFadeOut(true);
       setTimeout(() => {
-        setFadeOut(false);
         const categories = Object.keys(tempImages);
         const currentIndex = categories.indexOf(currentCategory);
         const nextIndex = (currentIndex + 1) % categories.length;
         const nextCategory = categories[nextIndex];
         setCurrentCategory(nextCategory);
         setCurrentImage(tempImages[nextCategory]);
-      }, 600); // 1초 후 페이드 아웃 효과 해제
+        setFadeOut(false);
+      }, 1000); // 1초 후 페이드 아웃 효과 해제
+      setFadeOut(true);
     };
 
     // 5초마다 이미지 변경
@@ -122,10 +123,11 @@ const MainPage = () => {
 
     // 컴포넌트 언마운트 시 clearInterval
     return () => clearInterval(intervalId);
-  }, [currentCategory]);
+  }, [currentCategory, tempImages]);
 
   const [showButton, setShowButton] = useState(true);
   const [showBottomButton, setShowBottomButton] = useState(false);
+
   useEffect(() => {
     let prevScrollPos = window.pageYOffset;
 
@@ -149,6 +151,7 @@ const MainPage = () => {
     };
   }, []);
   console.log(showButton);
+
   return (
     <>
       <Container>

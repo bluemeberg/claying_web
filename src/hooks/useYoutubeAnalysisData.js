@@ -150,7 +150,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
           key: youtubeOauthAPI,
           part: "snippet, statistics, status,contentDetails",
           myRating: "like",
-          maxResults: 50,
+          maxResults: 30,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -216,7 +216,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       console.log(nextPageToken);
       let cnt = 0;
       console.log("중간점검", allDNAData.length);
-      if (allDNAData.length < 50 && nextPageToken !== undefined) {
+      if (allDNAData.length < 30 && nextPageToken !== undefined) {
         while (true) {
           const result = await youtubeDataAPIInstacne.get("/videos", {
             params: {
@@ -269,7 +269,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
                     detail_category: "string",
                     tags: tags,
                   };
-                  if (allDNAData.length > 49) {
+                  if (allDNAData.length > 29) {
                     break;
                   }
                   allDNAData = [...allDNAData, data];
@@ -302,7 +302,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
           console.log(result.data.items);
           if (!result.data.nextPageToken) {
             break;
-          } else if (allDNAData.length > 49) {
+          } else if (allDNAData.length > 29) {
             // cnt 3 범위가 200개 영상
             break;
           }

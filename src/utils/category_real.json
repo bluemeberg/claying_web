@@ -61,7 +61,7 @@
   "Vlogs": "브이로그",
   "Howto & Style": "Howto & Style",
   "IT/Tech Reviews": "IT/Tech",
-  "Gameplay": "게임플레이",
+  "Games": "게임플레이",
   "Sports": "스포츠",
   "Space/Astronomy": "우주",
   "Drama": "드라마",
@@ -77,5 +77,9 @@
   "Comedy Movies": "코미디 영화",
   "Food/Cooking": "음식/요리",
   "Nonprofits/Activism": "행동가",
-  "Career Guidance": "커리어"
+  "Career Guidance": "커리어",
+  "Book Review": "독서",
+  "Robotics Engineering/Mobility": "로봇/모빌리티",
+  "Psychology": "심리학",
+  "Pet Videos": "애완 동물"
 }

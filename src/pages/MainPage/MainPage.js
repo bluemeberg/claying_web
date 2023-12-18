@@ -28,7 +28,7 @@ const MainPage = () => {
     "Business/Entrepreneurship": "/images/character/temp2/business.svg",
     Car: "/images/character/temp2/car.svg",
     Comedy: "/images/character/temp2/comedy.svg",
-    Gameplay: "/images/character/temp2/gameplay.svg",
+    Games: "/images/character/temp2/gameplay.svg",
     "Makeup/Beauty": "/images/character/temp2/makeupbeauty.svg",
   };
 

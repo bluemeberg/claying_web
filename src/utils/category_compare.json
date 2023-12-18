@@ -52,7 +52,7 @@
   "Romance Movies": "로맨스 매니아",
   "Animation Recap & Review": "애니메이션 매니아",
   "News & Politics": "뉴스 수집가",
-  "Gameplay": " 게임 연구자",
+  "Games": " 게임 연구자",
   "Vlogs": "생활탐방러",
   "Sports": "스포츠 참견러",
   "News/Politics": "뉴스 수집가",
@@ -78,5 +78,10 @@
   "Action/Adventure Movies": "영화 매니아",
   "Food/Cooking": "내가 오늘은 요리사",
   "Nonprofits/Activism": "행동가",
-  "Anime/Animation": "애니메이션 덕후"
+  "Anime/Animation": "애니메이션 덕후",
+  "Book Review": "지식냠냠",
+  "Robotics Engineering/Mobility": "아이언맨",
+  "Career Guidance": "커리어 길잡이",
+  "Psychology": "심리고수",
+  "Pet Videos": "애완러버"
 }

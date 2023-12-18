@@ -106,7 +106,7 @@ const FindChannel = () => {
       <ChannelBoundary />
       {location.state.props.props.users.length !== 0 ? (
         <LikedVideoSectionTitle>
-          클레잉 유저가 좋아한 영상
+          클레잉 유저가 좋아한 영상 
         </LikedVideoSectionTitle>
       ) : (
         <LikedVideoSectionTitle>인기 급상승 영상 이력</LikedVideoSectionTitle>

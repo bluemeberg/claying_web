@@ -144,13 +144,14 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
     let allDNAData = [];
     let shortVideos = [];
     let allShortDNAData = [];
+    let allMusicData = [];
     try {
       const result = await youtubeDataAPIInstacne.get("/videos", {
         params: {
           key: youtubeOauthAPI,
           part: "snippet, statistics, status,contentDetails",
           myRating: "like",
-          maxResults: 30,
+          maxResults: 50,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -209,6 +210,21 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
               allShortDNAData = [...allShortDNAData, data];
             }
           }
+        } else {
+          const tags = result.data.items[i].snippet.tags.slice(0, 10);
+          let data = {
+            id: result.data.items[i].id,
+            title: result.data.items[i].snippet.title,
+            thumbnail: result.data.items[i].snippet.thumbnails.medium.url,
+            duration: result.data.items[i].contentDetails.duration,
+            upload_date: result.data.items[i].snippet.publishedAt,
+            category: parseInt(result.data.items[i].snippet.categoryId, 10),
+            channel_id: result.data.items[i].snippet.channelId,
+            description: result.data.items[i].snippet.description,
+            detail_category: "string",
+            tags: tags,
+          };
+          allMusicData = [...allMusicData, data];
         }
       }
       // allVideos = [...allVideos, result.data.items];
@@ -216,7 +232,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
       console.log(nextPageToken);
       let cnt = 0;
       console.log("중간점검", allDNAData.length);
-      if (allDNAData.length < 30 && nextPageToken !== undefined) {
+      if (allDNAData.length < 50 && nextPageToken !== undefined) {
         while (true) {
           const result = await youtubeDataAPIInstacne.get("/videos", {
             params: {
@@ -269,7 +285,7 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
                     detail_category: "string",
                     tags: tags,
                   };
-                  if (allDNAData.length > 29) {
+                  if (allDNAData.length > 49) {
                     break;
                   }
                   allDNAData = [...allDNAData, data];
@@ -296,13 +312,28 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
                   allShortDNAData = [...allShortDNAData, data];
                 }
               }
+            } else {
+              const tags = result.data.items[i].snippet.tags.slice(0, 10);
+              let data = {
+                id: result.data.items[i].id,
+                title: result.data.items[i].snippet.title,
+                thumbnail: result.data.items[i].snippet.thumbnails.medium.url,
+                duration: result.data.items[i].contentDetails.duration,
+                upload_date: result.data.items[i].snippet.publishedAt,
+                category: parseInt(result.data.items[i].snippet.categoryId, 10),
+                channel_id: result.data.items[i].snippet.channelId,
+                description: result.data.items[i].snippet.description,
+                detail_category: "string",
+                tags: tags,
+              };
+              allMusicData = [...allMusicData, data];
             }
           }
           console.log(result.data.nextPageToken);
           console.log(result.data.items);
           if (!result.data.nextPageToken) {
             break;
-          } else if (allDNAData.length > 29) {
+          } else if (allDNAData.length > 49) {
             // cnt 3 범위가 200개 영상
             break;
           }
@@ -314,9 +345,10 @@ export const useYoutubeAnalysisData = (accessToken, email) => {
     }
     setLongLikedVideoData(allDNAData);
     setShortLikedVideoData(allShortDNAData);
+    console.log(allMusicData, "music");
     return allDNAData;
   }, [accessToken]);
-
+  
   // 영상 데이터 분석
   const handleLikedVideoProcessBatch = useCallback(
     async (videoData, batchSize) => {

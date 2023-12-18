@@ -51,7 +51,7 @@ const AnalysisPage = () => {
     result.setProgressValue(0);
     result.setProgressData([]);
   }, [result]);
-
+  
   return (
     <Container>
       {location.state !== null ? <NavBar data={location} /> : <></>}

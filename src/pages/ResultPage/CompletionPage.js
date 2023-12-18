@@ -27,7 +27,7 @@ const CompletionPage = () => {
     "Business/Entrepreneurship": "/images/character/temp/business.svg",
     Car: "/images/character/temp/car.svg",
     Comedy: "/images/character/temp/comedy.svg",
-    Gameplay: "/images/character/temp/game.svg",
+    Games: "/images/character/temp/game.svg",
     "Makeup/Beauty": "/images/character/temp/makeupbeauty.svg",
   };
 

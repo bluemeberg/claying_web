@@ -32,7 +32,7 @@ const RecommendChannel = () => {
     "Makeup/Beauty": "/images/character/temp/makeupbeauty.svg",
     Car: "/images/character/temp/car.svg",
     Comedy: "/images/character/temp/comedy.svg",
-    Gameplay: "/images/character/temp/gameplay.svg",
+    Games: "/images/character/temp/gameplay.svg",
     Finance: "/images/character/temp/finance.svg",
     "News/Politics": "/images/character/temp/news.svg",
     "Travel Vlogs": "/images/character/temp/travel.svg",
